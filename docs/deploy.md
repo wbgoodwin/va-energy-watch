@@ -10,11 +10,12 @@ dashboard change from time to time; if one doesn't match, search the dashboard f
 
 **Workers & Pages → Create → Import a repository** → `wbgoodwin/va-energy-watch`, with:
 
-- Build command: `npm run build`
+- Build command: `npm run build` (or blank: `wrangler.jsonc` runs the build itself before deploying)
 - Deploy command: `npx wrangler deploy`
 - Production branch: `main`
 
-Every push to `main` builds and deploys. The Worker is named `va-energy-watch`, matching `wrangler.jsonc`; if you ever
+Every push to `main` builds and deploys, and every pull request gets a preview build reported as a
+"Workers Builds" check on the PR. The Worker is named `va-energy-watch`, matching `wrangler.jsonc`; if you ever
 rename one, rename the other.
 
 ## 2. Put the domain on Cloudflare

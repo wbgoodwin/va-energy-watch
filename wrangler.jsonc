@@ -1,9 +1,11 @@
-// Cloudflare Workers config. Workers Builds runs `npm run build`, then `npx wrangler deploy`.
+// Cloudflare Workers config. `npx wrangler deploy` builds the site first (build.command),
+// so it works whatever build command the Cloudflare dashboard has.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "va-energy-watch",
   "main": "worker/index.ts",
   "compatibility_date": "2026-11-01",
+  "build": { "command": "npm run build" },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

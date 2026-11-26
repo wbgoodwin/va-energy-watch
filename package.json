@@ -9,7 +9,7 @@
     "check": "astro check",
     "test": "node --test \"test/**/*.test.ts\"",
     "validate": "node scripts/validate-data.ts",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "wrangler deploy"
   },
   "license": "MIT",
   "dependencies": {
