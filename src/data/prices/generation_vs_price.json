@@ -1,0 +1,455 @@
+{
+ "title": "Home electricity prices vs. the cost of making power",
+ "unit": "dollars per MWh (divide by 10 for cents per kWh)",
+ "notes": "Three measures of what electricity costs before it reaches your home, compared with what Virginia homes pay. Wholesale figures are averages for the whole PJM region (13 states and D.C., including Virginia), per MWh of load, before local distribution. The Virginia fleet figure covers fuel plus operation and maintenance for power plants located in Virginia; it leaves out the cost of building them. None of the figures are adjusted for inflation.",
+ "sources": {
+  "mmu": {
+   "name": "Monitoring Analytics (PJM's Independent Market Monitor), Components of the Total Cost of PJM Wholesale Power, monthly tables 2005 to 2026 (2026 through October), annual figures weighted by monthly real-time load",
+   "url": "https://www.monitoringanalytics.com/data/pjm_cost.shtml",
+   "year": 2026
+  },
+  "mmu-2014": {
+   "name": "Monitoring Analytics, 2014 State of the Market Report for PJM (press release, March 2015)",
+   "url": "https://prnewswire.com/news-releases/market-monitor-finds-pjm-wholesale-electricity-markets-competitive-300049844.html",
+   "year": 2015
+  },
+  "sep-gen": {
+   "name": "U.S. Energy Information Administration, State Electricity Profiles 2024, Virginia, Table 5 (generation by source) and Table 6 (delivered fuel prices)",
+   "url": "https://www.eia.gov/electricity/state/virginia/state_tables.php",
+   "year": 2025
+  },
+  "epa-hr": {
+   "name": "U.S. Energy Information Administration, Electric Power Annual 2025, Table 8.1 (average operating heat rates)",
+   "url": "https://www.eia.gov/electricity/annual/html/epa_08_01.html",
+   "year": 2026
+  },
+  "epa-om": {
+   "name": "U.S. Energy Information Administration, Electric Power Annual 2025, Table 8.4 (operating expenses of major investor-owned utilities, from FERC Form 1)",
+   "url": "https://www.eia.gov/electricity/annual/html/epa_08_04.html",
+   "year": 2026
+  }
+ },
+ "wholesale": {
+  "source": "mmu",
+  "rows": [
+   {
+    "year": 2005,
+    "months": 12,
+    "energy": 63.89,
+    "capacity": 0.04,
+    "transmission": 3.3,
+    "otherGrid": 1.96,
+    "total": 69.19,
+    "generation": 63.93
+   },
+   {
+    "year": 2006,
+    "months": 12,
+    "energy": 51.15,
+    "capacity": 0.11,
+    "transmission": 3.34,
+    "otherGrid": 1.73,
+    "total": 56.32,
+    "generation": 51.26
+   },
+   {
+    "year": 2007,
+    "months": 12,
+    "energy": 57.76,
+    "capacity": 3.85,
+    "transmission": 3.55,
+    "otherGrid": 1.83,
+    "total": 66.98,
+    "generation": 61.61
+   },
+   {
+    "year": 2008,
+    "months": 12,
+    "energy": 66.84,
+    "capacity": 8.83,
+    "transmission": 3.85,
+    "otherGrid": 1.63,
+    "total": 81.14,
+    "generation": 75.67
+   },
+   {
+    "year": 2009,
+    "months": 12,
+    "energy": 35.47,
+    "capacity": 12.13,
+    "transmission": 4.36,
+    "otherGrid": 1.14,
+    "total": 53.1,
+    "generation": 47.6
+   },
+   {
+    "year": 2010,
+    "months": 12,
+    "energy": 44.36,
+    "capacity": 14.04,
+    "transmission": 4.54,
+    "otherGrid": 1.36,
+    "total": 64.26,
+    "generation": 58.4
+   },
+   {
+    "year": 2011,
+    "months": 12,
+    "energy": 44.06,
+    "capacity": 12.25,
+    "transmission": 5.15,
+    "otherGrid": 1.3,
+    "total": 62.76,
+    "generation": 56.31
+   },
+   {
+    "year": 2012,
+    "months": 12,
+    "energy": 34.43,
+    "capacity": 7.36,
+    "transmission": 5.77,
+    "otherGrid": 1.34,
+    "total": 48.9,
+    "generation": 41.79
+   },
+   {
+    "year": 2013,
+    "months": 12,
+    "energy": 38.94,
+    "capacity": 7.58,
+    "transmission": 6.29,
+    "otherGrid": 1.68,
+    "total": 54.49,
+    "generation": 46.52
+   },
+   {
+    "year": 2014,
+    "months": 12,
+    "excluded": true,
+    "note": "Left out: the monitor's 2014 monthly table shows an energy cost of $93.20/MWh, far above the $53.14/MWh average energy price in its own 2014 State of the Market report, so that year's table looks inconsistent."
+   },
+   {
+    "year": 2015,
+    "months": 12,
+    "energy": 35.96,
+    "capacity": 12.5,
+    "transmission": 8.81,
+    "otherGrid": 1.39,
+    "total": 58.65,
+    "generation": 48.46
+   },
+   {
+    "year": 2016,
+    "months": 12,
+    "energy": 28.74,
+    "capacity": 11.78,
+    "transmission": 9.75,
+    "otherGrid": 1.2,
+    "total": 51.46,
+    "generation": 40.52
+   },
+   {
+    "year": 2017,
+    "months": 12,
+    "energy": 30.29,
+    "capacity": 12.16,
+    "transmission": 10.92,
+    "otherGrid": 1.3,
+    "total": 54.66,
+    "generation": 42.45
+   },
+   {
+    "year": 2018,
+    "months": 12,
+    "energy": 36.84,
+    "capacity": 13.95,
+    "transmission": 10.83,
+    "otherGrid": 1.41,
+    "total": 63.02,
+    "generation": 50.79
+   },
+   {
+    "year": 2019,
+    "months": 12,
+    "energy": 25.99,
+    "capacity": 12.0,
+    "transmission": 11.79,
+    "otherGrid": 1.33,
+    "total": 51.1,
+    "generation": 37.99
+   },
+   {
+    "year": 2020,
+    "months": 12,
+    "energy": 20.26,
+    "capacity": 9.99,
+    "transmission": 13.58,
+    "otherGrid": 1.27,
+    "total": 45.1,
+    "generation": 30.25
+   },
+   {
+    "year": 2021,
+    "months": 12,
+    "energy": 38.44,
+    "capacity": 11.64,
+    "transmission": 14.37,
+    "otherGrid": 1.4,
+    "total": 65.86,
+    "generation": 50.08
+   },
+   {
+    "year": 2022,
+    "months": 12,
+    "energy": 74.42,
+    "capacity": 8.81,
+    "transmission": 15.1,
+    "otherGrid": 1.6,
+    "total": 99.93,
+    "generation": 83.23
+   },
+   {
+    "year": 2023,
+    "months": 12,
+    "energy": 30.4,
+    "capacity": 4.63,
+    "transmission": 16.51,
+    "otherGrid": 1.49,
+    "total": 53.03,
+    "generation": 35.03
+   },
+   {
+    "year": 2024,
+    "months": 12,
+    "energy": 32.59,
+    "capacity": 3.61,
+    "transmission": 17.7,
+    "otherGrid": 1.58,
+    "total": 55.48,
+    "generation": 36.2
+   },
+   {
+    "year": 2025,
+    "months": 12,
+    "energy": 48.93,
+    "capacity": 13.11,
+    "transmission": 18.53,
+    "otherGrid": 1.77,
+    "total": 82.35,
+    "generation": 62.04
+   },
+   {
+    "year": 2026,
+    "months": 10,
+    "energy": 70.28,
+    "capacity": 19.79,
+    "transmission": 19.44,
+    "otherGrid": 2.11,
+    "total": 111.6,
+    "generation": 90.07
+   }
+  ]
+ },
+ "fleet": {
+  "sources": [
+   "sep-gen",
+   "epa-hr",
+   "epa-om"
+  ],
+  "method": "For each year: fuel cost per MWh = Virginia delivered fuel price ($/MMBtu, EIA Table 6) x U.S. average heat rate for that fuel (EIA Table 8.1); nuclear fuel and all operation and maintenance costs use U.S. investor-owned utility averages (EIA Table 8.4: fossil steam for coal and oil, gas turbine and small scale for gas, solar and wind). Hydro, solar and wind have no fuel cost. Weighted by each source's Virginia generation (EIA Table 5). Wood, other biomass and other sources (about 3% of generation) are left out because no comparable cost is published; pumped storage and batteries are left out because they store power rather than make it. Building costs are not included.",
+  "rows": [
+   {
+    "year": 2015,
+    "fuel": 21.79,
+    "om": 11.19,
+    "total": 32.99,
+    "coverage": 0.958,
+    "byFuel": {
+     "coal": 41.45,
+     "gas": 31.4,
+     "nuclear": 26.54
+    }
+   },
+   {
+    "year": 2016,
+    "fuel": 18.98,
+    "om": 10.56,
+    "total": 29.54,
+    "coverage": 0.963,
+    "byFuel": {
+     "coal": 40.99,
+     "gas": 27.71,
+     "nuclear": 25.24
+    }
+   },
+   {
+    "year": 2017,
+    "fuel": 19.97,
+    "om": 10.04,
+    "total": 30.01,
+    "coverage": 0.97,
+    "byFuel": {
+     "coal": 40.06,
+     "gas": 31.02,
+     "nuclear": 24.48
+    }
+   },
+   {
+    "year": 2018,
+    "fuel": 24.2,
+    "om": 9.48,
+    "total": 33.69,
+    "coverage": 0.965,
+    "byFuel": {
+     "coal": 40.84,
+     "gas": 37.26,
+     "nuclear": 23.88
+    }
+   },
+   {
+    "year": 2019,
+    "fuel": 18.87,
+    "om": 9.56,
+    "total": 28.44,
+    "coverage": 0.967,
+    "byFuel": {
+     "coal": 45.12,
+     "gas": 29.62,
+     "nuclear": 24.8
+    }
+   },
+   {
+    "year": 2020,
+    "fuel": 14.78,
+    "om": 8.8,
+    "total": 23.59,
+    "coverage": 0.972,
+    "byFuel": {
+     "coal": 40.54,
+     "gas": 23.29,
+     "nuclear": 22.77
+    }
+   },
+   {
+    "year": 2021,
+    "fuel": 21.48,
+    "om": 8.59,
+    "total": 30.07,
+    "coverage": 0.967,
+    "byFuel": {
+     "coal": 38.27,
+     "gas": 34.63,
+     "nuclear": 22.77
+    }
+   },
+   {
+    "year": 2022,
+    "fuel": 36.2,
+    "om": 8.94,
+    "total": 45.14,
+    "coverage": 0.97,
+    "byFuel": {
+     "coal": 49.89,
+     "gas": 59.67,
+     "nuclear": 22.65
+    }
+   },
+   {
+    "year": 2023,
+    "fuel": 18.04,
+    "om": 8.7,
+    "total": 26.73,
+    "coverage": 0.974,
+    "byFuel": {
+     "coal": 72.58,
+     "gas": 29.83,
+     "nuclear": 23.02
+    }
+   },
+   {
+    "year": 2024,
+    "fuel": 16.65,
+    "om": 8.19,
+    "total": 24.84,
+    "coverage": 0.978,
+    "byFuel": {
+     "coal": 62.69,
+     "gas": 26.46,
+     "nuclear": 22.82
+    }
+   }
+  ]
+ },
+ "mix": {
+  "source": "sep-gen",
+  "unit": "percent of electricity made in Virginia (share of all sources that produce power; pumped-storage hydro and batteries, which use more power than they return, are left out)",
+  "rows": [
+   {
+    "year": 2005,
+    "coal": 44.1,
+    "gas": 10.3,
+    "nuclear": 34.7,
+    "oil": 5.3,
+    "hydro": 1.9,
+    "solar": 0.0,
+    "wind": 0.0,
+    "wood": 2.3,
+    "biomass": 0.9,
+    "other": 0.6
+   },
+   {
+    "year": 2010,
+    "coal": 34.2,
+    "gas": 22.8,
+    "nuclear": 35.7,
+    "oil": 1.8,
+    "hydro": 2.1,
+    "solar": 0.0,
+    "wind": 0.0,
+    "wood": 1.9,
+    "biomass": 1.1,
+    "other": 0.6
+   },
+   {
+    "year": 2015,
+    "coal": 20.2,
+    "gas": 39.0,
+    "nuclear": 32.8,
+    "oil": 1.3,
+    "hydro": 1.4,
+    "solar": 0.0,
+    "wind": 0.0,
+    "wood": 3.6,
+    "biomass": 1.3,
+    "other": 0.5
+   },
+   {
+    "year": 2020,
+    "coal": 3.7,
+    "gas": 60.2,
+    "nuclear": 28.9,
+    "oil": 0.2,
+    "hydro": 2.0,
+    "solar": 1.3,
+    "wind": 0.0,
+    "wood": 2.3,
+    "biomass": 1.0,
+    "other": 0.5
+   },
+   {
+    "year": 2024,
+    "coal": 1.9,
+    "gas": 58.6,
+    "nuclear": 27.8,
+    "oil": 0.2,
+    "hydro": 1.2,
+    "solar": 6.7,
+    "wind": 0.0,
+    "wood": 2.5,
+    "biomass": 0.8,
+    "other": 0.4
+   }
+  ],
+  "note": "Virginia also imports a large share of its power from the rest of PJM: in 2024, retail sales were 138 million MWh and in-state generation was 103 million MWh (EIA)."
+ }
+}
