@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.env
+.env.*
+.DS_Store
+# LEAD tract downloads are large; keep raw zips out of git
+data-raw/
