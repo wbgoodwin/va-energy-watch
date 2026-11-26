@@ -1,0 +1,88 @@
+---
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { publishedCases, CASE_TYPE_LABEL, type CaseEntry } from "../../lib/published.ts";
+import { upcoming, filingsNewestFirst } from "../../lib/cases.ts";
+import { todayInVirginia, formatDate, relativeDays, daysBetween } from "../../lib/dates.ts";
+import { utilityName } from "../../data/utilities.ts";
+
+export async function getStaticPaths() {
+  return (await publishedCases()).map((entry) => ({ params: { docket: entry.data.docket }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: CaseEntry };
+const c = entry.data;
+const { Content } = await render(entry);
+const today = todayInVirginia();
+const next = upcoming(c, today);
+const past = c.keyDates.filter((k) => daysBetween(today, k.date) < 0).sort((a, b) => b.date.localeCompare(a.date));
+const filings = filingsNewestFirst(c);
+---
+<Base title={`${c.title} (${c.docket})`} description={c.summary ?? `${c.docket}: ${c.title}`}>
+  <article class="band narrow">
+    <p class="muted"><a href="/cases/">All cases</a> · {c.docket}</p>
+    <h1>{c.title}</h1>
+    <p class="lede">
+      <span class="tag">{CASE_TYPE_LABEL[c.caseType]}</span> {utilityName(c.utility)} · {c.status === "open" ? "Open" : "Closed"}
+      {c.filed && <> · Filed {formatDate(c.filed)}</>}
+    </p>
+    {c.summary && <p class="summary">{c.summary}</p>}
+    {c.sccUrl && <p><a href={c.sccUrl}>Official case record at the SCC</a></p>}
+
+    {next.length > 0 && (
+      <section>
+        <h2>Coming up</h2>
+        <ul class="card-list">
+          {next.map((k) => (
+            <li class={k.kind === "comment-deadline" ? "due" : ""}>{formatDate(k.date)} ({relativeDays(k.days)}): {k.label}</li>
+          ))}
+        </ul>
+        {next.some((k) => k.kind === "comment-deadline") && (
+          <p class="muted hint">Anyone can file a written comment before the deadline through the{" "}
+          <a href="https://www.scc.virginia.gov/casecomments/Submit-Public-Comments">SCC's public comment page</a>, using the case number {c.docket}.</p>
+        )}
+      </section>
+    )}
+
+    <section class="prose explainer"><Content /></section>
+
+    {filings.length > 0 && (
+      <section>
+        <h2>Filings</h2>
+        <div class="scroll">
+          <table class="plain">
+            <thead><tr><th scope="col">Date</th><th scope="col">Document</th><th scope="col">Filed by</th></tr></thead>
+            <tbody>
+              {filings.map((f) => (
+                <tr>
+                  <td style="white-space:nowrap">{formatDate(f.date)}</td>
+                  <td>{f.url ? <a href={f.url}>{f.title}</a> : f.title}</td>
+                  <td>{f.filedBy ?? ""}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+
+    {past.length > 0 && (
+      <section>
+        <h2>Earlier dates</h2>
+        <ul class="card-list">{past.map((k) => <li>{formatDate(k.date)}: {k.label}</li>)}</ul>
+      </section>
+    )}
+
+    <p class="muted asof">
+      Entered by hand from the public SCC record{c.lastReviewed && <>, last checked {formatDate(c.lastReviewed)}</>}. The
+      official record is the source of truth.
+    </p>
+  </article>
+</Base>
+
+<style>
+  section { margin-top: 32px; }
+  .summary { margin-top: 16px; font-size: 18px; }
+  .hint { margin-top: 10px; font-size: 14px; }
+  .asof { margin-top: 32px; font-size: 14px; }
+</style>

@@ -1,0 +1,50 @@
+---
+import Base from "../../layouts/Base.astro";
+import { publishedCases, CASE_TYPE_LABEL } from "../../lib/published.ts";
+import { sortCases, nextCommentDeadline, filingsNewestFirst } from "../../lib/cases.ts";
+import { todayInVirginia, formatDate, relativeDays } from "../../lib/dates.ts";
+import { utilityName } from "../../data/utilities.ts";
+
+// Built nightly, so "today" and the deadline countdowns stay current.
+const today = todayInVirginia();
+const cases = sortCases((await publishedCases()).map((c) => ({ ...c.data, id: c.id })), today);
+---
+<Base title="SCC cases" description="Virginia electric and gas cases before the State Corporation Commission: key dates, comment deadlines and the newest filings.">
+  <section class="band narrow">
+    <h1>Cases before the SCC</h1>
+    <p class="lede">
+      Electric and gas cases that will change what Virginia households pay, with comment deadlines and links to the official
+      filings. Cases are picked and entered by hand from the SCC's public Docket Search.
+      <a href="/cases/feed.xml">Follow new filings by RSS</a>.
+    </p>
+
+    {cases.length === 0 ? (
+      <p class="empty">The case tracker is being filled in now. Check back soon, or see the <a href="https://www.scc.virginia.gov/">SCC website</a> for the official record.</p>
+    ) : (
+      <ul class="card-list">
+        {cases.map((c) => {
+          const dl = nextCommentDeadline(c, today);
+          const latest = filingsNewestFirst(c)[0];
+          return (
+            <li>
+              <p class="meta"><span class="tag">{CASE_TYPE_LABEL[c.caseType]}</span> <span class="muted">{c.docket} · {utilityName(c.utility)}{c.status === "closed" && " · closed"}</span></p>
+              <h2><a href={`/cases/${c.docket}/`}>{c.title}</a></h2>
+              {c.summary && <p>{c.summary}</p>}
+              {dl && <p class="due">Public comments due {formatDate(dl.date)} ({relativeDays(dl.days)})</p>}
+              {latest && <p class="muted">Latest filing: {latest.title}, {formatDate(latest.date)}</p>}
+            </li>
+          );
+        })}
+      </ul>
+    )}
+    <p class="muted asof">Updated {formatDate(today)}.</p>
+  </section>
+</Base>
+
+<style>
+  .card-list h2 { font-size: 21px; margin: 6px 0; }
+  .card-list h2 a { color: var(--ink); }
+  .card-list p + p { margin-top: 4px; }
+  .empty { margin-top: 28px; padding: 16px; background: var(--soft); border-radius: 8px; }
+  .asof { margin-top: 20px; font-size: 14px; }
+</style>

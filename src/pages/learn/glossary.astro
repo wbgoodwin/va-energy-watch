@@ -1,0 +1,19 @@
+---
+import Base from "../../layouts/Base.astro";
+import { GLOSSARY } from "../../data/glossary.ts";
+const terms = [...GLOSSARY].sort((a, b) => a.term.localeCompare(b.term));
+---
+<Base title="Glossary" description="Plain-English definitions of the terms used in Virginia utility rate cases.">
+  <article class="band narrow">
+    <h1>Glossary</h1>
+    <p class="lede">The words that come up most in Virginia utility cases, in plain English.</p>
+    <dl class="terms">
+      {terms.map((t) => (
+        <>
+          <dt id={t.id}>{t.term}{t.short && <span class="muted"> · {t.short}</span>}</dt>
+          <dd>{t.definition}</dd>
+        </>
+      ))}
+    </dl>
+  </article>
+</Base>

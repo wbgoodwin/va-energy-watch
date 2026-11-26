@@ -1,0 +1,46 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../site.ts";
+---
+<Base title="About" description="What Virginia Energy Watch is, where its numbers come from, and what it is not.">
+  <article class="band narrow prose">
+    <h1>About this site</h1>
+    <p class="lede">
+      {SITE.name} helps Virginia households and the people who work with them answer three questions: how hard is my energy
+      bill to pay, what is my utility asking the State Corporation Commission (SCC) for, and how do I weigh in before the deadline.
+    </p>
+
+    <h2>What's here now</h2>
+    <ul>
+      <li><a href="/">Energy burden map</a>: how much of their income households spend on home energy, for every county and
+        independent city, by income level. The figures can be <a href="/data/va-burden-localities.csv">downloaded as CSV</a>.</li>
+      <li><a href="/cases/">SCC cases</a>: a hand-picked list of electric and gas cases, with key dates, comment deadlines and
+        links to the official filings. It is being filled in now.</li>
+      <li><a href="/learn/glossary/">Glossary</a>: the rate-case terms that come up most, in plain English.</li>
+    </ul>
+
+    <h2>Coming next</h2>
+    <ul>
+      <li>Census-tract detail and address search on the map.</li>
+      <li>Which electric and gas utility serves each area.</li>
+      <li>A rate-increase calculator: if rates rise by a given percent, how burden changes in your area.</li>
+      <li>Plain-English explainers for the biggest open cases.</li>
+    </ul>
+
+    <h2>What this site is not</h2>
+    <p>
+      This is information, not legal advice. The site is not affiliated with the SCC, any utility or any advocacy
+      organization. Case details are entered by hand from the public SCC record and can lag behind it; every case page links
+      to the official record, which is always the source of truth.
+    </p>
+
+    <h2>How case information is gathered</h2>
+    <p>
+      Cases are tracked from the SCC's public Docket Search and entered by hand. The site does not run automated crawlers
+      against the SCC's website.
+    </p>
+
+    <h2>Who made it</h2>
+    <p>{SITE.byline} The code and data are open on <a href={SITE.repo}>GitHub</a>; corrections are welcome as issues there.</p>
+  </article>
+</Base>

@@ -1,0 +1,21 @@
+// Plain-English definitions. Keep each under about 60 words and avoid jargon inside definitions.
+export type Term = { id: string; term: string; short?: string; definition: string };
+
+export const GLOSSARY: Term[] = [
+  { id: "base-rates", term: "Base rates", definition: "The part of your bill that pays for the utility's poles, wires, pipes, power plants, staff and profit. Base rates change only after the SCC approves a request, usually in a rate case." },
+  { id: "certificate", term: "CPCN", short: "Certificate of public convenience and necessity", definition: "Permission from the SCC to build a major facility, such as a power plant or a large transmission line. The SCC weighs whether it is needed and what it will cost customers." },
+  { id: "consumer-counsel", term: "Consumer Counsel", definition: "The Division of Consumer Counsel in the Virginia Attorney General's office. It takes part in many utility cases to represent the interests of residential and small business customers." },
+  { id: "docket", term: "Docket (case number)", definition: "The SCC's file for a case, holding every filing, order and comment. Utility cases have numbers like PUR-2026-00112: the year the case opened and a sequence number." },
+  { id: "energy-burden", term: "Energy burden", definition: "The share of a household's income spent on home energy: electricity, gas and other heating fuels. Spending 6% or more is commonly treated as unaffordable." },
+  { id: "fpl", term: "Federal Poverty Level (FPL)", definition: "An income threshold set each year by the federal government, based on household size. Many assistance programs use multiples of it, such as \"below 200% of FPL\"." },
+  { id: "fuel-factor", term: "Fuel factor", definition: "A charge on electric bills that passes through what the utility spends on fuel and purchased power, without profit. It is reset in its own SCC case, so it can rise or fall separately from base rates." },
+  { id: "hearing-examiner", term: "Hearing examiner", definition: "An SCC staff lawyer who runs the hearing in many cases and writes a report recommending a decision. The three commissioners make the final ruling." },
+  { id: "intervenor", term: "Respondent (intervenor)", definition: "A person or organization that formally joins a case to argue a position, file testimony and question witnesses. Advocacy groups, large customers and the Consumer Counsel often take part this way." },
+  { id: "irp", term: "IRP", short: "Integrated resource plan", definition: "A utility's long-range plan, usually 15 years or more, for how it will meet customer demand: which plants to build or retire and how much to buy. The SCC reviews it, but approving a plan is not approving any one project." },
+  { id: "public-comment", term: "Public comment", definition: "A written statement anyone can file in an SCC case before the deadline in the case's scheduling order. Comments become part of the public case file. Some cases also let members of the public speak at a hearing as public witnesses." },
+  { id: "rate-base", term: "Rate base", definition: "The value of the utility's investments, such as plants and lines, on which customers pay a return. A bigger rate base means more profit for the utility and higher base rates." },
+  { id: "rate-case", term: "Rate case", definition: "An SCC case where a utility asks to change its base rates. The SCC staff, the Consumer Counsel and other parties can challenge the request before the commission decides." },
+  { id: "rider", term: "Rider", definition: "A separate charge on your bill that pays for one specific program or project, such as a new power plant, a grid upgrade or an energy-efficiency program. Each rider is usually updated in its own SCC case, often every year." },
+  { id: "roe", term: "ROE", short: "Return on equity", definition: "The profit rate the SCC allows on the shareholders' share of the rate base, stated as a percent. Small changes in ROE move customer bills by millions of dollars a year." },
+  { id: "scc", term: "SCC", short: "State Corporation Commission", definition: "The Virginia agency that regulates utility rates and services, among other industries. Its three commissioners, elected by the General Assembly, decide its cases." },
+];

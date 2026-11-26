@@ -1,0 +1,38 @@
+name: Nightly rebuild
+
+# Rebuilds the site every morning so "today", comment-deadline countdowns and
+# "coming up" lists stay current. It does NOT crawl the SCC website: the SCC's
+# robots.txt disallows automated access, so cases are entered by hand.
+# See docs/dockets.md.
+
+on:
+  schedule:
+    - cron: "15 10 * * *" # 5:15 AM Eastern (6:15 AM during daylight time)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run validate
+      - run: npm run build
+      - name: Trigger Cloudflare Pages deploy
+        env:
+          DEPLOY_HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::notice::CF_PAGES_DEPLOY_HOOK is not set; skipping deploy. See docs/deploy.md."
+            exit 0
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK" > /dev/null
+          echo "Deploy triggered."
