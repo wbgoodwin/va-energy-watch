@@ -1,7 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
-import { DOCKET_RE, SCC_URL_RE } from "./lib/cases.ts";
+import { DOCKET_RE, SCC_URL_RE, KEY_DATE_KINDS } from "./lib/cases.ts";
 import { ISO_DATE } from "./lib/dates.ts";
 import { UTILITY_IDS } from "./data/utilities.ts";
 
@@ -32,8 +32,10 @@ const cases = defineCollection({
       .array(
         z.object({
           date: isoDate,
+          /** 24-hour Virginia local time, e.g. "10:00", when the order gives one. */
+          time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "use 24-hour HH:MM").optional(),
           label: z.string(),
-          kind: z.enum(["comment-deadline", "hearing", "order", "filing", "other"]).default("other"),
+          kind: z.enum(KEY_DATE_KINDS).default("other"),
         }),
       )
       .default([]),
@@ -44,6 +46,8 @@ const cases = defineCollection({
           title: z.string(),
           filedBy: z.string().optional(),
           url: sccUrl.optional(),
+          /** SCC Document Control Center number stamped on the filing, e.g. 261190029. */
+          dcc: z.string().regex(/^\d{9}$/, "DCC numbers are 9 digits").optional(),
         }),
       )
       .default([]),

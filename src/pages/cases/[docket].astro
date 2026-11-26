@@ -34,9 +34,10 @@ const filings = filingsNewestFirst(c);
         <h2>Coming up</h2>
         <ul class="card-list">
           {next.map((k) => (
-            <li class={k.kind === "comment-deadline" ? "due" : ""}>{formatDate(k.date)} ({relativeDays(k.days)}): {k.label}</li>
+            <li class={k.kind === "comment-deadline" ? "due" : ""}>{formatDate(k.date)}{k.time && `, ${k.time}`} ({relativeDays(k.days)}): {k.label}</li>
           ))}
         </ul>
+        <p class="muted hint"><a href="/calendar/">See every case's dates</a> or <a href="/calendar/deadlines.ics">add them to your calendar</a>.</p>
         {next.some((k) => k.kind === "comment-deadline") && (
           <p class="muted hint">Anyone can file a written comment before the deadline through the{" "}
           <a href="https://www.scc.virginia.gov/casecomments/Submit-Public-Comments">SCC's public comment page</a>, using the case number {c.docket}.</p>
@@ -51,13 +52,14 @@ const filings = filingsNewestFirst(c);
         <h2>Filings</h2>
         <div class="scroll">
           <table class="plain">
-            <thead><tr><th scope="col">Date</th><th scope="col">Document</th><th scope="col">Filed by</th></tr></thead>
+            <thead><tr><th scope="col">Date</th><th scope="col">Document</th><th scope="col">Filed by</th><th scope="col">SCC doc. no.</th></tr></thead>
             <tbody>
               {filings.map((f) => (
                 <tr>
                   <td style="white-space:nowrap">{formatDate(f.date)}</td>
                   <td>{f.url ? <a href={f.url}>{f.title}</a> : f.title}</td>
                   <td>{f.filedBy ?? ""}</td>
+                  <td>{f.dcc ?? ""}</td>
                 </tr>
               ))}
             </tbody>

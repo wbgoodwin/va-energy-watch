@@ -3,10 +3,21 @@ import { daysBetween } from "./dates.ts";
 export const DOCKET_RE = /^PUR-\d{4}-\d{5}$/;
 export const SCC_URL_RE = /^https:\/\/(www\.)?scc\.virginia\.gov\//;
 
-export type KeyDateKind = "comment-deadline" | "hearing" | "order" | "filing" | "other";
+export const KEY_DATE_KINDS = [
+  "comment-deadline",
+  "public-witness",
+  "participation-deadline",
+  "testimony",
+  "hearing",
+  "order",
+  "filing",
+  "other",
+] as const;
+export type KeyDateKind = (typeof KEY_DATE_KINDS)[number];
 
-export type KeyDate = { date: string; label: string; kind: KeyDateKind };
-export type Filing = { date: string; title: string; filedBy?: string; url?: string };
+/** `time` is 24-hour Virginia local time ("10:00"); most deadlines have none. */
+export type KeyDate = { date: string; time?: string; label: string; kind: KeyDateKind };
+export type Filing = { date: string; title: string; filedBy?: string; url?: string; dcc?: string };
 
 /** The fields the helpers below need; the content schema is a superset. */
 export type CaseLike = {
