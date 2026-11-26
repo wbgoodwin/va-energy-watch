@@ -1,0 +1,100 @@
+{
+ "title": "Dominion Energy Virginia: typical residential bill for 1,000 kWh a month",
+ "unit": "dollars per month",
+ "notes": "A typical bill for a home using 1,000 kWh in a month, as Dominion and the SCC report it, including base rates, fuel and riders. Snapshots are mostly July 1 of each year; there is a gap between 2007 and 2015. Values marked approximate were read from a chart.",
+ "sources": {
+  "veura": {
+   "name": "SCC status reports on the Virginia Electric Utility Regulation Act, filed with the General Assembly (Reports and Documents: RD274, RD320, RD282, RD390, RD418, RD572, RD717, RD716)",
+   "url": "https://rga.lis.virginia.gov/",
+   "year": 2025,
+   "note": "Reports are on the Virginia General Assembly's Reports and Documents site, not the SCC website."
+  },
+  "other": {
+   "name": "See the citation on each row (local news report or Dominion's handout to a county board)",
+   "url": null,
+   "year": 2026
+  }
+ },
+ "rows": [
+  {
+   "date": "2007-07-01",
+   "total": 90.59,
+   "citation": "SCC VEURA status report 2018 (RD274) p.4",
+   "source": "veura"
+  },
+  {
+   "date": "2015-07-01",
+   "total": 109.4,
+   "approx": true,
+   "citation": "SCC status report 2019 (RD320) p.2 chart",
+   "source": "veura"
+  },
+  {
+   "date": "2018-07-01",
+   "total": 115.0,
+   "citation": "SCC status report 2018 (RD274) p.4",
+   "source": "veura"
+  },
+  {
+   "date": "2019-07-01",
+   "total": 113.76,
+   "citation": "SCC status report 2019 (RD320) p.2",
+   "source": "veura"
+  },
+  {
+   "date": "2020-07-01",
+   "total": 116.69,
+   "citation": "SCC status report 2020 (RD282) p.4",
+   "source": "veura"
+  },
+  {
+   "date": "2021-07-01",
+   "total": 121.28,
+   "citation": "SCC status report 2021 (RD390) p.5",
+   "source": "veura"
+  },
+  {
+   "date": "2022-07-01",
+   "total": 136.93,
+   "citation": "SCC status report 2022 (RD418) p.9",
+   "source": "veura"
+  },
+  {
+   "date": "2023-07-01",
+   "total": 125.12,
+   "citation": "SCC status report 2023 (RD572) p.7",
+   "source": "veura"
+  },
+  {
+   "date": "2024-07-01",
+   "total": 133.74,
+   "citation": "SCC status report 2024 (RD717) p.7",
+   "source": "veura"
+  },
+  {
+   "date": "2025-07-01",
+   "total": 149.92,
+   "citation": "SCC status report 2025 (RD716) p.6",
+   "source": "veura"
+  },
+  {
+   "date": "2025-09-01",
+   "total": 159.57,
+   "citation": "WTVR 2026-09-03 / RD716 p.9 (Oct 2025)",
+   "source": "other"
+  },
+  {
+   "date": "2026-01-01",
+   "total": 170.61,
+   "approx": true,
+   "citation": "York County Dominion update Aug 2026 (chart)",
+   "source": "other"
+  },
+  {
+   "date": "2026-07-01",
+   "total": 180.79,
+   "citation": "York County Dominion update Aug 2026",
+   "source": "other"
+  }
+ ]
+}

@@ -14,6 +14,7 @@ export const NAV = [
   { href: "/", label: "Energy burden map" },
   { href: "/cases/", label: "SCC cases" },
   { href: "/calendar/", label: "Deadlines" },
+  { href: "/prices/", label: "Prices" },
   { href: "/learn/glossary/", label: "Glossary" },
   { href: "/about/", label: "About" },
 ] as const;

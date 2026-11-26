@@ -1,0 +1,137 @@
+---
+import raw from "../data/prices/dominion_bill.json";
+import { dayNumber, monthYear, pctChange, scale, ticks, usd2, type DominionBill } from "../lib/prices.ts";
+
+// Dated snapshots of Dominion's typical 1,000 kWh bill on a true time axis.
+const d = raw as unknown as DominionBill;
+const rows = d.rows;
+const first = rows[0];
+const last = rows[rows.length - 1];
+const yearAgo = rows.find((r) => r.date === `${+last.date.slice(0, 4) - 1}${last.date.slice(4)}`);
+
+const W = 760, H = 320, M = { t: 24, r: 24, b: 34, l: 48 };
+const t0 = dayNumber("2007-01-01"), t1 = dayNumber("2027-01-01");
+const x = scale(t0, t1, M.l, W - M.r);
+const y = scale(0, 200, H - M.b, M.t);
+const pts = rows.map((r) => ({ ...r, cx: x(dayNumber(r.date)), cy: y(r.total) }));
+const gapAfter = 0; // the 2007 to 2015 stretch has no snapshots
+const solid = pts.slice(gapAfter + 1).map((p, i) => `${i ? "L" : "M"}${p.cx.toFixed(1)},${p.cy.toFixed(1)}`).join("");
+const xt = ticks(2008, 2026, 2);
+const yt = ticks(0, 200, 50);
+const src = d.sources;
+const label = new Set([0, 1, rows.length - 1]);
+---
+<figure class="bill" aria-labelledby="bill-title">
+  <figcaption>
+    <h2 id="bill-title">Dominion's typical monthly bill</h2>
+    <p class="muted">What a Dominion Energy Virginia home using 1,000 kWh a month pays, including base rates, fuel and riders.</p>
+  </figcaption>
+
+  <div class="kpis">
+    <div><b>{usd2(last.total)}</b><span>typical bill, {monthYear(last.date)}</span></div>
+    {yearAgo && <div><b>+{usd2(last.total - yearAgo.total)}</b><span>per month more than {monthYear(yearAgo.date)} (+{pctChange(yearAgo.total, last.total)}%)</span></div>}
+    <div><b>+{pctChange(first.total, last.total)}%</b><span>since {monthYear(first.date)} ({usd2(first.total)})</span></div>
+  </div>
+
+  <div class="plot" id="billPlot">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="bill-title bill-desc">
+      <desc id="bill-desc">The typical Dominion bill for 1,000 kWh rose from {usd2(first.total)} in {monthYear(first.date)} to {usd2(last.total)} in {monthYear(last.date)}, with most of the rise since 2021.</desc>
+      <g class="grid">
+        {yt.map((v) => (<g><line x1={M.l} x2={W - M.r} y1={y(v)} y2={y(v)} /><text x={M.l - 8} y={y(v) + 4} text-anchor="end">${v}</text></g>))}
+        {xt.map((v) => <text x={x(dayNumber(`${v}-01-01`))} y={H - 10} text-anchor="middle">{v}</text>)}
+      </g>
+      <line class="ln dash" x1={pts[0].cx} y1={pts[0].cy} x2={pts[1].cx} y2={pts[1].cy} />
+      <text class="note" x={(pts[0].cx + pts[1].cx) / 2} y={(pts[0].cy + pts[1].cy) / 2 + 22} text-anchor="middle">no yearly figures in between</text>
+      <path class="ln" d={solid} />
+      {pts.map((p, i) => (
+        <g>
+          <circle cx={p.cx} cy={p.cy} r="4.5" class={p.approx ? "dot hollow" : "dot"} />
+          {label.has(i) && <text class="vl" x={p.cx} y={p.cy - 12} text-anchor={i === rows.length - 1 ? "end" : "middle"}>{usd2(p.total)}</text>}
+          <circle cx={p.cx} cy={p.cy} r="14" fill="transparent" class="hit" tabindex="0"
+            data-x={p.cx} data-y={p.cy} data-date={monthYear(p.date)} data-total={usd2(p.total)} data-approx={p.approx ? "1" : ""} data-cite={p.citation}>
+            <title>{monthYear(p.date)}: {usd2(p.total)}{p.approx ? " (approximate)" : ""}. {p.citation}</title>
+          </circle>
+        </g>
+      ))}
+    </svg>
+    <div class="tip" id="billTip" hidden></div>
+  </div>
+
+  <div class="keys">
+    <span><i class="dk"></i>Reported figure</span>
+    <span><i class="dk hollow"></i>Approximate (read from a chart)</span>
+  </div>
+
+  <details>
+    <summary>Show the numbers and sources</summary>
+    <div class="scroll">
+      <table class="plain">
+        <thead><tr><th scope="col">Date</th><th scope="col">Typical bill (1,000 kWh)</th><th scope="col">Source</th></tr></thead>
+        <tbody>
+          {[...rows].reverse().map((r) => (
+            <tr><td>{monthYear(r.date)}</td><td>{usd2(r.total)}{r.approx && " (approx.)"}</td><td>{r.citation}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted small">{d.notes} SCC status reports are published on the <a href={src.veura.url ?? undefined}>General Assembly's Reports and Documents site</a>.</p>
+    <p class="small"><a href="/data/v1/dominion-typical-bill.csv" download>Download CSV</a> · <a href="/data/v1/dominion-typical-bill.json">JSON</a></p>
+  </details>
+</figure>
+
+<script>
+  const plot = document.getElementById("billPlot")!;
+  const svg = plot.querySelector("svg")!;
+  const tip = document.getElementById("billTip")!;
+  const show = (c: SVGCircleElement) => {
+    const { date, total, approx } = c.dataset;
+    tip.textContent = "";
+    const b = document.createElement("b");
+    b.textContent = `${date}: ${total}${approx ? " (approx.)" : ""}`;
+    const s = document.createElement("span");
+    s.textContent = c.dataset.cite ?? "";
+    tip.append(b, s);
+    tip.hidden = false;
+    const box = svg.getBoundingClientRect();
+    const k = box.width / svg.viewBox.baseVal.width;
+    tip.style.left = `${Math.min(Math.max(Number(c.dataset.x) * k, 110), box.width - 110)}px`;
+    tip.style.top = `${Math.max(Number(c.dataset.y) * k - 70, 0)}px`;
+  };
+  const hide = () => { tip.hidden = true; };
+  svg.querySelectorAll<SVGCircleElement>(".hit").forEach((c) => {
+    c.addEventListener("pointerenter", () => show(c));
+    c.addEventListener("focus", () => show(c));
+    c.addEventListener("blur", hide);
+  });
+  svg.addEventListener("pointerleave", hide);
+</script>
+
+<style>
+  .bill { margin: 0; }
+  .bill figcaption p { margin-top: 6px; max-width: 68ch; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); margin: 18px 0 8px; border-top: 1px solid var(--rule); }
+  .kpis > div { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); }
+  .kpis b { display: block; font: 700 26px/1.1 var(--serif); font-variant-numeric: tabular-nums; }
+  .kpis span { font-size: 13px; color: var(--muted); }
+  .plot { position: relative; margin-top: 12px; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .grid line { stroke: var(--rule); }
+  .grid text, .note { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .ln { fill: none; stroke: var(--teal); stroke-width: 2; stroke-linejoin: round; }
+  .ln.dash { stroke-dasharray: 4 4; stroke: var(--muted); }
+  .dot { fill: var(--teal); stroke: var(--bg); stroke-width: 2; }
+  .dot.hollow { fill: var(--bg); stroke: var(--teal); }
+  .vl { fill: var(--ink); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .hit { cursor: default; outline: none; }
+  .hit:focus-visible { stroke: var(--teal); stroke-width: 2; }
+  .tip[hidden] { display: none; }
+  .tip { position: absolute; transform: translateX(-50%); max-width: 220px; background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; font-size: 13px; pointer-events: none; box-shadow: 0 2px 8px rgb(0 0 0 / 0.12); display: grid; gap: 2px; }
+  .tip span { color: var(--muted); font-size: 12px; }
+  .keys { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .dk { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--teal); border: 2px solid var(--teal); vertical-align: middle; margin-right: 6px; }
+  .dk.hollow { background: var(--bg); }
+  details { margin-top: 18px; }
+  summary { cursor: pointer; color: var(--teal); }
+  details > * + * { margin-top: 10px; }
+  .small { font-size: 13px; }
+</style>

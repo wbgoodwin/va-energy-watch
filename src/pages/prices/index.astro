@@ -1,0 +1,49 @@
+---
+import Base from "../../layouts/Base.astro";
+import RateChart from "../../components/RateChart.astro";
+import BillChart from "../../components/BillChart.astro";
+import CostChart from "../../components/CostChart.astro";
+---
+<Base title="Electricity prices and costs" description="How Virginia home electricity prices and Dominion's typical bill have changed, and what it costs to make power from solar, wind, gas, nuclear, coal and batteries.">
+  <div class="band">
+    <h1>Electricity prices and what power costs to make</h1>
+    <p class="lede">
+      What Virginia homes pay for electricity, how that has changed, and what different power sources cost to build and run.
+      Every number links to its source, and each dataset can be downloaded.
+    </p>
+    <nav class="jump" aria-label="On this page">
+      <a href="#rates-title">Home prices since 1990</a>
+      <a href="#bill-title">Dominion's typical bill</a>
+      <a href="#costs-title">Cost by power source</a>
+    </nav>
+  </div>
+
+  <div class="band stack">
+    <RateChart />
+    <BillChart />
+    <CostChart />
+  </div>
+
+  <div class="band narrow prose">
+    <h2>How to read these together</h2>
+    <p>
+      Your bill pays for much more than making electricity. It also covers power lines, poles and substations, programs the
+      law requires, and the utility's profit, so a cheap power source does not translate one-for-one into a cheaper bill.
+      The cost chart compares sources on the same footing: the average cost per megawatt-hour of power over a plant's life.
+    </p>
+    <p>
+      The cost of making power from a new plant also depends on where and how it is built, on interest rates, and, for gas and
+      coal, on fuel prices, which can swing from year to year. Plants that are already paid off cost much less to keep running,
+      which is why the chart shows them separately.
+    </p>
+    <p>
+      Utility rate cases at the State Corporation Commission decide which of these costs end up on your bill. See the{" "}
+      <a href="/cases/">cases we track</a> and their <a href="/calendar/">comment deadlines</a>.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .jump { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 16px; font-size: 15px; }
+  .stack { display: grid; gap: clamp(48px, 7vw, 80px); padding-top: 0; }
+</style>
