@@ -1,0 +1,133 @@
+---
+import Base from "../../layouts/Base.astro";
+import { publishedEvents } from "../../lib/published.ts";
+import { KIND_LABEL, ACTION_KINDS, type CalendarEvent } from "../../lib/calendar.ts";
+import { todayInVirginia, formatDate, relativeDays, daysBetween } from "../../lib/dates.ts";
+import { UTILITIES, utilityName } from "../../data/utilities.ts";
+import { SITE } from "../../site.ts";
+
+// Built nightly, so the countdowns stay current.
+const today = todayInVirginia();
+const events = (await publishedEvents()).filter((e) => e.date >= today);
+
+const monthKey = (d: string) => d.slice(0, 7);
+const monthName = (d: string) => {
+  const [y, m] = d.split("-").map(Number);
+  return new Date(Date.UTC(y!, m! - 1, 1)).toLocaleDateString("en-US", { timeZone: "UTC", month: "long", year: "numeric" });
+};
+const months = new Map<string, CalendarEvent[]>();
+for (const e of events) months.set(monthKey(e.date), [...(months.get(monthKey(e.date)) ?? []), e]);
+
+const utilitiesInUse = UTILITIES.filter((u) => events.some((e) => e.utility === u.id));
+const time12 = (t: string) => {
+  const [h, m] = t.split(":").map(Number);
+  return `${((h! + 11) % 12) + 1}:${String(m).padStart(2, "0")} ${h! < 12 ? "a.m." : "p.m."}`;
+};
+const host = new URL(SITE.url).host;
+---
+<Base title="Deadlines and hearings" description="Upcoming comment deadlines, hearings and other dates in Virginia SCC electric and gas cases, with a calendar you can subscribe to.">
+  <section class="band narrow">
+    <h1>Deadlines and hearings</h1>
+    <p class="lede">
+      Every upcoming date in the cases this site follows: when public comments are due, when you can sign up to speak, when
+      groups must file to join a case, and when hearings happen. Dates come from each case's scheduling order. Always check
+      the official SCC record before acting.
+    </p>
+
+    <div class="subscribe">
+      <p><strong>Add these dates to your calendar.</strong> Subscribe once and new dates appear automatically.</p>
+      <p>
+        <a class="button" href={`webcal://${host}/calendar/deadlines.ics`}>Subscribe</a>
+        <a href="/calendar/deadlines.ics">Download .ics</a>
+      </p>
+      <p class="muted small">
+        Google Calendar: Other calendars, From URL, then paste <code>{SITE.url}/calendar/deadlines.ics</code>.
+        Want only one utility? Use <code>{SITE.url}/api/v1/events.ics?utility=dominion</code>.
+      </p>
+    </div>
+
+    {events.length === 0 ? (
+      <p class="empty">No upcoming dates yet. Dates appear here as cases are added.</p>
+    ) : (
+      <>
+        <form class="filters" aria-label="Filter dates" data-filters hidden>
+          {utilitiesInUse.length > 1 && (
+            <label>Utility
+              <select name="utility">
+                <option value="">All</option>
+                {utilitiesInUse.map((u) => <option value={u.id}>{u.name}</option>)}
+              </select>
+            </label>
+          )}
+          <label class="check"><input type="checkbox" name="act" /> Only dates where the public can take part</label>
+        </form>
+
+        {[...months].map(([key, list]) => (
+          <section class="month" data-month>
+            <h2>{monthName(`${key}-01`)}</h2>
+            <ul class="card-list">
+              {list.map((e) => {
+                const days = daysBetween(today, e.date);
+                const act = ACTION_KINDS.includes(e.kind);
+                return (
+                  <li data-utility={e.utility ?? ""} data-act={act ? "1" : "0"}>
+                    <p class="when">
+                      <span class={e.kind === "comment-deadline" ? "due" : ""}>{formatDate(e.date)}{e.time && `, ${time12(e.time)}`}</span>
+                      <span class="muted"> · {relativeDays(days)}</span>
+                    </p>
+                    <p class="what"><span class="tag">{KIND_LABEL[e.kind]}</span> {e.label}</p>
+                    <p class="muted"><a href={`/cases/${e.docket}/`}>{e.caseTitle}</a> · {e.docket} · {utilityName(e.utility)}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))}
+      </>
+    )}
+
+    <p class="muted asof">
+      Updated {formatDate(today)}. Developers: the same dates are at <a href="/api/v1/events">/api/v1/events</a> (filter with{" "}
+      <code>from</code>, <code>to</code>, <code>kind</code>, <code>utility</code>, <code>docket</code>).
+    </p>
+  </section>
+</Base>
+
+<script>
+  // Progressive enhancement: the full list works without JavaScript.
+  const form = document.querySelector<HTMLFormElement>("[data-filters]");
+  if (form) {
+    form.hidden = false;
+    const apply = () => {
+      const utility = (form.elements.namedItem("utility") as HTMLSelectElement | null)?.value ?? "";
+      const act = (form.elements.namedItem("act") as HTMLInputElement).checked;
+      document.querySelectorAll<HTMLElement>("[data-month]").forEach((month) => {
+        let shown = 0;
+        month.querySelectorAll<HTMLElement>("li[data-utility]").forEach((li) => {
+          const ok = (!utility || li.dataset.utility === utility) && (!act || li.dataset.act === "1");
+          li.hidden = !ok;
+          if (ok) shown++;
+        });
+        month.hidden = shown === 0;
+      });
+    };
+    form.addEventListener("change", apply);
+  }
+</script>
+
+<style>
+  .subscribe { margin-top: 24px; padding: 16px; background: var(--soft); border-radius: 8px; }
+  .subscribe p + p { margin-top: 8px; }
+  .button { display: inline-block; padding: 6px 14px; border-radius: 6px; background: var(--teal); color: var(--bg); text-decoration: none; margin-right: 12px; }
+  .small { font-size: 14px; }
+  .small code, .asof code { overflow-wrap: anywhere; }
+  .filters { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 24px; align-items: center; }
+  .filters select { margin-left: 8px; font: inherit; }
+  .filters .check { display: flex; gap: 6px; align-items: center; }
+  .month { margin-top: 32px; }
+  .month h2 { font-size: 20px; }
+  .card-list p + p { margin-top: 4px; }
+  .when { font-weight: 600; }
+  .empty { margin-top: 28px; padding: 16px; background: var(--soft); border-radius: 8px; }
+  .asof { margin-top: 32px; font-size: 14px; }
+</style>
