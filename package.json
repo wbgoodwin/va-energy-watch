@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "test": "node --test \"test/**/*.test.ts\"",
-    "validate": "node scripts/validate-data.ts"
+    "validate": "node scripts/validate-data.ts",
+    "deploy": "wrangler deploy"
   },
   "license": "MIT",
   "dependencies": {
@@ -25,7 +26,8 @@
     "@types/d3-geo": "^3.1.1",
     "@types/d3-selection": "^3.0.13",
     "@types/node": "^22.20.7",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.168.0"
   },
   "private": true,
   "type": "module",
