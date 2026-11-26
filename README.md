@@ -1,0 +1,58 @@
+# Virginia Energy Watch
+
+Source for [virginiaenergywatch.org](https://virginiaenergywatch.org): a free site that shows how hard Virginia home energy
+bills are to pay, and tracks the State Corporation Commission (SCC) cases that will change them, in plain English.
+
+Information only, not legal advice. Not affiliated with the SCC, any utility or any advocacy organization.
+
+## What's in it
+
+| Page | What it does |
+| --- | --- |
+| `/` | Energy burden map for all 133 counties and independent cities, by income level, with a ranked table and CSV download |
+| `/cases/` | Hand-curated watchlist of SCC electric and gas cases: key dates, comment deadlines, filings, RSS feed |
+| `/learn/glossary/` | Plain-English rate-case terms |
+| `/about/` | Scope, sources and limits |
+| `/api/health` | Cloudflare Pages Function placeholder for later server features |
+
+## Stack
+
+- [Astro](https://astro.build) static site, d3 for the map (no tile server needed).
+- Cloudflare Pages hosting. `functions/` holds Pages Functions, so later features (search, D1, Vectorize, model calls) run
+  on the same deploy with no hosting move.
+- GitHub Actions: `ci.yml` tests and builds every PR; `nightly.yml` rebuilds each morning so deadline countdowns stay current.
+- Data lives in the repo: `src/data/va_burden.json` (DOE LEAD 2022, county level) and `src/content/cases/*.md` (one file per case).
+
+## Develop
+
+```sh
+nvm use          # Node 22.23.4 or newer
+npm ci
+npm run dev      # http://localhost:4321
+npm test         # unit tests (node:test)
+npm run check    # type check
+npm run build    # static output in dist/
+```
+
+## Docs
+
+- [Deploying to Cloudflare Pages and connecting the domain](docs/deploy.md)
+- [Adding or updating a case](docs/adding-a-case.md)
+- [How docket data is gathered, and why there is no crawler](docs/dockets.md)
+
+## Roadmap
+
+1. Map site live (now): county map, CSV, glossary, case pages ready for data.
+2. Tract-level map from the LEAD Virginia tract file, address search, utility territories.
+3. Docket tracker filled: 10 to 20 watched cases, explainers, email alerts.
+4. Rate-increase scenario slider, full-text search in filings.
+5. Natural-language search with cited answers (Pages Functions, D1, Vectorize).
+
+## Data sources
+
+- [DOE Low-Income Energy Affordability Data (LEAD) Tool, 2022 update](https://catalog.data.gov/dataset/low-income-energy-affordability-data-lead-tool-2022-update)
+- Census cartographic boundary files, 2023
+- [EIA Form 861, 2024](https://www.eia.gov/electricity/data/eia861/) for utilities serving each locality
+- [SCC public case records](https://www.scc.virginia.gov/), entered by hand
+
+Code is MIT licensed. Source data is from US and Virginia public agencies.

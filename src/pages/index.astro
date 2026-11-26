@@ -1,0 +1,43 @@
+---
+import Base from "../layouts/Base.astro";
+import BurdenMap from "../components/BurdenMap.astro";
+---
+<Base description="How much of their income Virginia households spend on home energy, by county and city and by income level.">
+  <section class="band">
+    <h1>Below the poverty line, Virginia households spend about a fifth of their income on home energy</h1>
+    <p class="lede">
+      Energy burden is the share of household income spent on electricity, gas and other heating fuels. Spending 6% or more
+      is generally considered unaffordable. The map shows how burden varies across Virginia's 133 counties and independent
+      cities, by household income level.
+    </p>
+    <BurdenMap />
+  </section>
+
+  <section class="band notes">
+    <div>
+      <h3>How burden is calculated</h3>
+      <p>Average burden follows the DOE LEAD Tool method: average annual energy cost (electricity, gas and other fuels) divided
+      by average annual household income, weighted by households. "Share above 6%" is estimated from LEAD's household cells,
+      grouped by tenure, building age, building type and heating fuel, and counts households in cells whose average burden is
+      6% or more.</p>
+    </div>
+    <div>
+      <h3>Data</h3>
+      <p><a href="https://catalog.data.gov/dataset/low-income-energy-affordability-data-lead-tool-2022-update">DOE Low-Income
+      Energy Affordability Data (LEAD) Tool, 2022 update</a>, county file by Federal Poverty Level (FPL), based on Census
+      American Community Survey 5-year data. Boundaries: Census cartographic boundary file, 2023. Utilities serving each
+      locality: <a href="https://www.eia.gov/electricity/data/eia861/">EIA-861, 2024</a>.</p>
+    </div>
+    <div>
+      <h3>Limits</h3>
+      <p>Figures are modeled estimates, not utility billing data, and reflect costs before the 2024–2026 rate increases. Small
+      localities and the lowest income groups rest on few survey responses and can swing widely. Incomes under the poverty line
+      are very low on average, so burden for that group is high everywhere.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px; font-size: 15px; color: var(--muted); }
+  .notes h3 { margin: 0 0 6px; color: var(--ink); }
+</style>
