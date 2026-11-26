@@ -13,14 +13,14 @@ Information only, not legal advice. Not affiliated with the SCC, any utility or 
 | `/cases/` | Hand-curated watchlist of SCC electric and gas cases: key dates, comment deadlines, filings, RSS feed |
 | `/learn/glossary/` | Plain-English rate-case terms |
 | `/about/` | Scope, sources and limits |
-| `/api/health` | Cloudflare Pages Function placeholder for later server features |
+| `/api/health` | Worker endpoint, placeholder for later server features |
 
 ## Stack
 
 - [Astro](https://astro.build) static site, d3 for the map (no tile server needed).
-- Cloudflare Pages hosting. `functions/` holds Pages Functions, so later features (search, D1, Vectorize, model calls) run
-  on the same deploy with no hosting move.
-- GitHub Actions: `ci.yml` tests and builds every PR; `nightly.yml` rebuilds each morning so deadline countdowns stay current.
+- Cloudflare Workers hosting with static assets (`wrangler.jsonc`). Pages are served straight from `dist/`; only `/api/*`
+  runs the small Worker in `worker/index.ts`, where later features (search, D1, Vectorize, model calls) will live.
+- GitHub Actions: `ci.yml` tests and builds every PR; `nightly.yml` rebuilds and redeploys each morning so deadline countdowns stay current.
 - Data lives in the repo: `src/data/va_burden.json` (DOE LEAD 2022, county level) and `src/content/cases/*.md` (one file per case).
 
 ## Develop
@@ -32,11 +32,12 @@ npm run dev      # http://localhost:4321
 npm test         # unit tests (node:test)
 npm run check    # type check
 npm run build    # static output in dist/
+npx wrangler dev # serve dist/ plus the Worker, as Cloudflare will
 ```
 
 ## Docs
 
-- [Deploying to Cloudflare Pages and connecting the domain](docs/deploy.md)
+- [Deploying to Cloudflare and connecting the domain](docs/deploy.md)
 - [Adding or updating a case](docs/adding-a-case.md)
 - [How docket data is gathered, and why there is no crawler](docs/dockets.md)
 
@@ -46,7 +47,7 @@ npm run build    # static output in dist/
 2. Tract-level map from the LEAD Virginia tract file, address search, utility territories.
 3. Docket tracker filled: 10 to 20 watched cases, explainers, email alerts.
 4. Rate-increase scenario slider, full-text search in filings.
-5. Natural-language search with cited answers (Pages Functions, D1, Vectorize).
+5. Natural-language search with cited answers (Worker, D1, Vectorize).
 
 ## Data sources
 

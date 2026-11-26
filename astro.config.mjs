@@ -1,8 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-// Static build for Cloudflare Pages. Pages Functions (functions/) run beside
-// this output, so Phase 5 server features need no hosting change.
+// Static build, served by Cloudflare Workers static assets (see wrangler.jsonc).
+// worker/index.ts handles /api/* for later server features.
 export default defineConfig({
   site: "https://virginiaenergywatch.org",
   output: "static",

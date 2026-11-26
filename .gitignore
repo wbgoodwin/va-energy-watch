@@ -7,3 +7,4 @@ dist/
 .DS_Store
 # LEAD tract downloads are large; keep raw zips out of git
 data-raw/
+.dev.vars
