@@ -13,6 +13,8 @@ Information only, not legal advice. Not affiliated with the SCC, any utility or 
 | `/cases/` | Hand-curated watchlist of SCC electric and gas cases: key dates, comment deadlines, filings, RSS feed |
 | `/learn/glossary/` | Plain-English rate-case terms |
 | `/about/` | Scope, sources and limits |
+| `/calendar/` | Every upcoming comment deadline, hearing and filing date across tracked cases; subscribable at `/calendar/deadlines.ics` |
+| `/api/v1/events` | Read-only JSON of the same dates. Filters: `from`, `to` (YYYY-MM-DD), `kind` (comma list), `utility`, `docket`. `/api/v1/events.ics` takes the same filters and returns a calendar feed |
 | `/api/health` | Worker endpoint, placeholder for later server features |
 
 ## Stack
