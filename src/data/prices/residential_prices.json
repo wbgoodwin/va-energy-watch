@@ -1,0 +1,290 @@
+{
+ "title": "Average residential electricity price, Virginia vs. U.S.",
+ "unit": "cents per kWh",
+ "notes": "Average revenue per kilowatt-hour sold to homes by all providers (EIA-861 / EIA-826): total residential revenue divided by residential kWh sold, including taxes passed through on bills only where utilities report them as revenue. Not adjusted for inflation. 2026 covers January to September only, so it is not directly comparable with full years (summer months are usually priced higher). For comparison, January to September 2025 was 15.14 cents in Virginia and 17.14 cents nationally.",
+ "sources": {
+  "sep-2024": {
+   "name": "U.S. Energy Information Administration, State Electricity Profiles 2024, Table 8 (Virginia and United States workbooks), released November 10, 2025",
+   "url": "https://www.eia.gov/electricity/state/virginia/state_tables.php",
+   "year": 2025
+  },
+  "epa-2025": {
+   "name": "U.S. Energy Information Administration, Electric Power Annual 2025, Table 2.10",
+   "url": "https://www.eia.gov/electricity/annual/html/epa_02_10.html",
+   "year": 2026
+  },
+  "epm-2026-09": {
+   "name": "U.S. Energy Information Administration, Electric Power Monthly, Table 5.6.B (year to date through September 2026)",
+   "url": "https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_6_b",
+   "year": 2026
+  }
+ },
+ "comparison": {
+  "period": "jan-sep",
+  "year": 2025,
+  "virginia": 15.14,
+  "us": 17.14,
+  "source": "epm-2026-09"
+ },
+ "rows": [
+  {
+   "year": 1990,
+   "period": "full-year",
+   "virginia": 7.25,
+   "us": 7.83,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1991,
+   "period": "full-year",
+   "virginia": 7.34,
+   "us": 8.04,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1992,
+   "period": "full-year",
+   "virginia": 7.63,
+   "us": 8.21,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1993,
+   "period": "full-year",
+   "virginia": 7.57,
+   "us": 8.32,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1994,
+   "period": "full-year",
+   "virginia": 7.75,
+   "us": 8.38,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1995,
+   "period": "full-year",
+   "virginia": 7.84,
+   "us": 8.4,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1996,
+   "period": "full-year",
+   "virginia": 7.6,
+   "us": 8.36,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1997,
+   "period": "full-year",
+   "virginia": 7.75,
+   "us": 8.43,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1998,
+   "period": "full-year",
+   "virginia": 7.51,
+   "us": 8.26,
+   "source": "sep-2024"
+  },
+  {
+   "year": 1999,
+   "period": "full-year",
+   "virginia": 7.48,
+   "us": 8.16,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2000,
+   "period": "full-year",
+   "virginia": 7.52,
+   "us": 8.24,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2001,
+   "period": "full-year",
+   "virginia": 7.79,
+   "us": 8.58,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2002,
+   "period": "full-year",
+   "virginia": 7.79,
+   "us": 8.44,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2003,
+   "period": "full-year",
+   "virginia": 7.76,
+   "us": 8.72,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2004,
+   "period": "full-year",
+   "virginia": 7.99,
+   "us": 8.95,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2005,
+   "period": "full-year",
+   "virginia": 8.16,
+   "us": 9.45,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2006,
+   "period": "full-year",
+   "virginia": 8.49,
+   "us": 10.4,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2007,
+   "period": "full-year",
+   "virginia": 8.74,
+   "us": 10.65,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2008,
+   "period": "full-year",
+   "virginia": 9.62,
+   "us": 11.26,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2009,
+   "period": "full-year",
+   "virginia": 10.61,
+   "us": 11.51,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2010,
+   "period": "full-year",
+   "virginia": 10.45,
+   "us": 11.54,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2011,
+   "period": "full-year",
+   "virginia": 10.64,
+   "us": 11.72,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2012,
+   "period": "full-year",
+   "virginia": 11.08,
+   "us": 11.88,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2013,
+   "period": "full-year",
+   "virginia": 10.84,
+   "us": 12.13,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2014,
+   "period": "full-year",
+   "virginia": 11.1,
+   "us": 12.52,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2015,
+   "period": "full-year",
+   "virginia": 11.37,
+   "us": 12.65,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2016,
+   "period": "full-year",
+   "virginia": 11.36,
+   "us": 12.55,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2017,
+   "period": "full-year",
+   "virginia": 11.55,
+   "us": 12.89,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2018,
+   "period": "full-year",
+   "virginia": 11.73,
+   "us": 12.87,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2019,
+   "period": "full-year",
+   "virginia": 12.07,
+   "us": 13.01,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2020,
+   "period": "full-year",
+   "virginia": 12.03,
+   "us": 13.15,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2021,
+   "period": "full-year",
+   "virginia": 11.96,
+   "us": 13.66,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2022,
+   "period": "full-year",
+   "virginia": 13.34,
+   "us": 15.04,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2023,
+   "period": "full-year",
+   "virginia": 14.26,
+   "us": 16,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2024,
+   "period": "full-year",
+   "virginia": 14.41,
+   "us": 16.48,
+   "source": "sep-2024"
+  },
+  {
+   "year": 2025,
+   "period": "full-year",
+   "virginia": 15.28,
+   "us": 17.23,
+   "source": "epa-2025"
+  },
+  {
+   "year": 2026,
+   "period": "jan-sep",
+   "virginia": 17.03,
+   "us": 18.19,
+   "source": "epm-2026-09"
+  }
+ ]
+}

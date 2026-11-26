@@ -1,0 +1,149 @@
+---
+import raw from "../data/prices/residential_prices.json";
+import { cents, pctChange, scale, ticks, type ResidentialPrices } from "../lib/prices.ts";
+
+// Line chart drawn at build time as SVG; a small script adds the hover readout.
+const d = raw as unknown as ResidentialPrices;
+const full = d.rows.filter((r) => r.period === "full-year");
+const partial = d.rows.filter((r) => r.period !== "full-year");
+const first = full[0];
+const last = full[full.length - 1];
+
+const W = 760, H = 340, M = { t: 16, r: 112, b: 34, l: 44 };
+const x0 = first.year, x1 = (partial.at(-1)?.year ?? last.year);
+const x = scale(x0, x1, M.l, W - M.r);
+const yMax = 20;
+const y = scale(0, yMax, H - M.b, M.t);
+const yt = ticks(0, yMax, 4);
+const xt = ticks(1990, x1, 5).filter((v) => v >= x0 && v <= x1);
+const path = (k: "virginia" | "us") => full.map((r, i) => `${i ? "L" : "M"}${x(r.year).toFixed(1)},${y(r[k]).toFixed(1)}`).join("");
+const src = d.sources;
+const points = d.rows.map((r) => ({ ...r, cx: x(r.year) }));
+---
+<figure class="rates" aria-labelledby="rates-title">
+  <figcaption>
+    <h2 id="rates-title">How home electricity prices have changed</h2>
+    <p class="muted">Average price Virginia homes paid per kilowatt-hour, compared with the U.S. average, {x0} to {x1}. Not adjusted for inflation.</p>
+  </figcaption>
+
+  <div class="kpis">
+    <div><b>{cents(last.virginia)}</b><span>Virginia average, {last.year}</span></div>
+    <div><b>+{pctChange(full.find((r) => r.year === last.year - 5)!.virginia, last.virginia)}%</b><span>Virginia change, {last.year - 5} to {last.year}</span></div>
+    <div><b>{cents(last.us)}</b><span>U.S. average, {last.year}</span></div>
+    {partial.map((p) => (
+      <div><b>{cents(p.virginia)}</b><span>Virginia, Jan to Sep {p.year} (vs. {cents(d.comparison.virginia)} same months {d.comparison.year})</span></div>
+    ))}
+  </div>
+
+  <div class="plot" id="ratePlot">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="rates-title rates-desc">
+      <desc id="rates-desc">Virginia's average residential price rose from {cents(first.virginia)} per kWh in {first.year} to {cents(last.virginia)} in {last.year}. The U.S. average rose from {cents(first.us)} to {cents(last.us)}. Virginia has stayed below the national average throughout.</desc>
+      <g class="grid">
+        {yt.map((v) => (<g><line x1={M.l} x2={W - M.r} y1={y(v)} y2={y(v)} /><text x={M.l - 8} y={y(v) + 4} text-anchor="end">{v}¢</text></g>))}
+        {xt.map((v) => <text x={x(v)} y={H - 10} text-anchor="middle">{v}</text>)}
+      </g>
+      <path class="ln us" d={path("us")} />
+      <path class="ln va" d={path("virginia")} />
+      {partial.map((p) => (
+        <g class="ytd">
+          <line x1={x(last.year)} x2={x(p.year)} y1={y(last.us)} y2={y(p.us)} class="ln us dash" />
+          <line x1={x(last.year)} x2={x(p.year)} y1={y(last.virginia)} y2={y(p.virginia)} class="ln va dash" />
+          <circle cx={x(p.year)} cy={y(p.us)} r="4.5" class="dot us hollow" />
+          <circle cx={x(p.year)} cy={y(p.virginia)} r="4.5" class="dot va hollow" />
+        </g>
+      ))}
+      <text class="dl" x={x(x1) + 10} y={y(partial.at(-1)?.us ?? last.us) + 4}>U.S. average</text>
+      <text class="dl" x={x(x1) + 10} y={y(partial.at(-1)?.virginia ?? last.virginia) + 4}>Virginia</text>
+      <line class="cross" id="rateCross" y1={M.t} y2={H - M.b} x1="0" x2="0" />
+      <g id="rateHits">
+        {points.map((p, i) => {
+          const prev = points[i - 1]?.cx ?? M.l, next = points[i + 1]?.cx ?? W - M.r;
+          return <rect x={(prev + p.cx) / 2} width={Math.max(1, (next - prev) / 2)} y={M.t} height={H - M.t - M.b} fill="transparent"
+            data-x={p.cx} data-year={p.year} data-va={p.virginia} data-us={p.us} data-period={p.period} />;
+        })}
+      </g>
+    </svg>
+    <div class="tip" id="rateTip" hidden></div>
+  </div>
+
+  <div class="keys">
+    <span><i class="sw va"></i>Virginia</span>
+    <span><i class="sw us"></i>U.S. average</span>
+    <span><i class="sw dash"></i>Partial year (January to September 2026)</span>
+  </div>
+
+  <details>
+    <summary>Show the numbers and sources</summary>
+    <div class="scroll">
+      <table class="plain">
+        <thead><tr><th scope="col">Year</th><th scope="col">Virginia (¢/kWh)</th><th scope="col">U.S. (¢/kWh)</th><th scope="col">Source</th></tr></thead>
+        <tbody>
+          {[...d.rows].reverse().map((r) => (
+            <tr><td>{r.year}{r.period !== "full-year" && " (Jan–Sep)"}</td><td>{r.virginia.toFixed(2)}</td><td>{r.us.toFixed(2)}</td>
+              <td><a href={src[r.source].url ?? undefined}>{src[r.source].name}</a></td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted small">{d.notes}</p>
+    <p class="small"><a href="/data/v1/residential-prices.csv" download>Download CSV</a> · <a href="/data/v1/residential-prices.json">JSON</a></p>
+  </details>
+</figure>
+
+<script>
+  const plot = document.getElementById("ratePlot")!;
+  const svg = plot.querySelector("svg")!;
+  const tip = document.getElementById("rateTip")!;
+  const cross = document.getElementById("rateCross")!;
+  const show = (r: SVGRectElement) => {
+    const { year, va, us, period } = r.dataset;
+    const cx = Number(r.dataset.x);
+    cross.setAttribute("x1", String(cx));
+    cross.setAttribute("x2", String(cx));
+    cross.classList.add("on");
+    tip.innerHTML = `<b>${year}${period === "jan-sep" ? " (Jan–Sep)" : ""}</b><span><i class="sw va"></i>Virginia ${Number(va).toFixed(2)}¢</span><span><i class="sw us"></i>U.S. ${Number(us).toFixed(2)}¢</span>`;
+    tip.hidden = false;
+    const box = svg.getBoundingClientRect();
+    const px = (cx / svg.viewBox.baseVal.width) * box.width;
+    tip.style.left = `${Math.min(Math.max(px, 70), box.width - 70)}px`;
+  };
+  const hide = () => { tip.hidden = true; cross.classList.remove("on"); };
+  svg.querySelectorAll<SVGRectElement>("#rateHits rect").forEach((r) => {
+    r.addEventListener("pointerenter", () => show(r));
+  });
+  svg.addEventListener("pointerleave", hide);
+</script>
+
+<style>
+  .rates { margin: 0; }
+  .rates figcaption p { margin-top: 6px; max-width: 68ch; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); margin: 18px 0 8px; border-top: 1px solid var(--rule); }
+  .kpis > div { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); }
+  .kpis b { display: block; font: 700 26px/1.1 var(--serif); font-variant-numeric: tabular-nums; }
+  .kpis span { font-size: 13px; color: var(--muted); }
+  .plot { position: relative; margin-top: 12px; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .grid line { stroke: var(--rule); }
+  .grid text, .note { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .ln.va { stroke: var(--teal); }
+  .ln.us { stroke: var(--muted); }
+  .ln.dash { stroke-dasharray: 4 4; }
+  .dot { stroke-width: 2; fill: var(--bg); }
+  .dot.va { stroke: var(--teal); }
+  .dot.us { stroke: var(--muted); }
+  .dl { fill: var(--ink); font-size: 13px; font-weight: 600; }
+  .cross { stroke: var(--muted); stroke-width: 1; opacity: 0; }
+  .cross.on { opacity: 0.6; }
+  .tip[hidden] { display: none; }
+  .tip { position: absolute; top: 0; transform: translateX(-50%); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; font-size: 13px; pointer-events: none; box-shadow: 0 2px 8px rgb(0 0 0 / 0.12); display: grid; gap: 2px; font-variant-numeric: tabular-nums; }
+  .keys { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  :global(.sw) { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 6px; }
+  :global(.sw.va) { border-color: var(--teal); }
+  :global(.sw.us) { border-color: var(--muted); }
+  :global(.sw.dash) { border-top-style: dashed; border-color: var(--muted); }
+  details { margin-top: 18px; }
+  summary { cursor: pointer; color: var(--teal); }
+  details > * + * { margin-top: 10px; }
+  .small { font-size: 13px; }
+</style>

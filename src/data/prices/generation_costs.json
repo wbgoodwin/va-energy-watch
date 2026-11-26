@@ -1,0 +1,181 @@
+{
+ "title": "What it costs to make electricity, by source",
+ "unit": "dollars per megawatt-hour (MWh), unsubsidized",
+ "notes": "Levelized cost of energy (LCOE): the average cost of each megawatt-hour over a plant's life, covering building, financing, fuel and upkeep, with no federal tax credits. Ranges reflect different sites, sizes and financing. These are national estimates for a new plant, not Virginia bills: they leave out transmission, grid upgrades and backup needs. 1 MWh = 1,000 kWh, so $100/MWh is 10 cents per kWh.",
+ "sources": {
+  "lazard-2026": {
+   "name": "Lazard, Levelized Cost of Energy+ (LCOE v19.0, LCOS v11.0), July 2026",
+   "url": "https://www.lazard.com/research-insights/lcoeplus/",
+   "year": 2026
+  },
+  "dominion-cvow-2026": {
+   "name": "Utility Dive, \"Dominion upbeat on offshore wind as cost estimate eases, sales rise\", May 4, 2026 (Dominion's first-quarter 2026 earnings call)",
+   "url": "https://www.utilitydive.com/news/dominion-upbeat-on-offshore-wind-as-cost-estimate-eases-sales-rise/819218/",
+   "year": 2026
+  }
+ },
+ "rows": [
+  {
+   "id": "wind-onshore",
+   "label": "Onshore wind",
+   "group": "new",
+   "low": 37,
+   "high": 99,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "solar-utility",
+   "label": "Large solar farm",
+   "group": "new",
+   "low": 40,
+   "high": 98,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "wind-storage",
+   "label": "Onshore wind + battery",
+   "group": "new",
+   "low": 49,
+   "high": 140,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "gas-cc",
+   "label": "Gas plant, combined cycle (runs most hours)",
+   "group": "new",
+   "low": 51,
+   "high": 129,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "solar-storage",
+   "label": "Large solar farm + battery",
+   "group": "new",
+   "low": 61,
+   "high": 156,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "geothermal",
+   "label": "Geothermal",
+   "group": "new",
+   "low": 67,
+   "high": 111,
+   "source": "lazard-2026",
+   "page": "p. 7",
+   "note": "Lazard marks this as illustrative: an older estimate adjusted for inflation."
+  },
+  {
+   "id": "coal",
+   "label": "Coal plant",
+   "group": "new",
+   "low": 72,
+   "high": 177,
+   "source": "lazard-2026",
+   "page": "p. 7",
+   "note": "Excludes the cost of shipping and storing coal."
+  },
+  {
+   "id": "solar-community",
+   "label": "Community and business rooftop solar",
+   "group": "new",
+   "low": 88,
+   "high": 197,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "wind-offshore",
+   "label": "Offshore wind",
+   "group": "new",
+   "low": 105,
+   "high": 167,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "gas-peaker",
+   "label": "Gas peaker plant (runs only at peak times)",
+   "group": "new",
+   "low": 144,
+   "high": 276,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "nuclear-new",
+   "label": "New nuclear plant",
+   "group": "new",
+   "low": 175,
+   "high": 255,
+   "source": "lazard-2026",
+   "page": "p. 7"
+  },
+  {
+   "id": "existing-nuclear",
+   "label": "Existing nuclear plant (paid off)",
+   "group": "existing",
+   "low": 26,
+   "high": 36,
+   "source": "lazard-2026",
+   "page": "p. 12",
+   "note": "Marginal cost to keep running an existing, fully paid-off plant, including decommissioning."
+  },
+  {
+   "id": "existing-gas-cc",
+   "label": "Existing gas combined-cycle plant (paid off)",
+   "group": "existing",
+   "low": 32,
+   "high": 51,
+   "source": "lazard-2026",
+   "page": "p. 12",
+   "note": "Marginal cost to keep running an existing, fully paid-off plant. Rises and falls with gas prices."
+  },
+  {
+   "id": "existing-coal",
+   "label": "Existing coal plant (paid off)",
+   "group": "existing",
+   "low": 34,
+   "high": 69,
+   "source": "lazard-2026",
+   "page": "p. 12",
+   "note": "Marginal cost to keep running an existing, fully paid-off plant."
+  },
+  {
+   "id": "battery-4h",
+   "label": "Large battery, 4-hour",
+   "group": "storage",
+   "low": 210,
+   "high": 292,
+   "source": "lazard-2026",
+   "page": "LCOS section",
+   "note": "Cost per MWh the battery delivers, including the power used to charge it. Not directly comparable with generators."
+  },
+  {
+   "id": "battery-2h",
+   "label": "Large battery, 2-hour",
+   "group": "storage",
+   "low": 215,
+   "high": 414,
+   "source": "lazard-2026",
+   "page": "LCOS section",
+   "note": "Cost per MWh the battery delivers, including the power used to charge it. Not directly comparable with generators."
+  }
+ ],
+ "virginia": [
+  {
+   "id": "cvow",
+   "label": "Dominion's Coastal Virginia Offshore Wind (CVOW)",
+   "value": 84,
+   "compare": "wind-offshore",
+   "source": "dominion-cvow-2026",
+   "note": "Dominion's own estimate (May 2026), within the $80 to $90 range in its 2021 SCC filing. Dominion later raised CVOW's total cost estimate to about $11.7 billion (Utility Dive, July 31, 2026); it has not been shown how that changes this figure."
+  }
+ ],
+ "notCovered": "Home rooftop solar, home batteries and plug-in (balcony) solar: the 2026 Lazard report no longer includes a home-scale case, and we have not found a comparable, sourced 2026 figure yet."
+}

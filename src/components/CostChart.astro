@@ -1,0 +1,127 @@
+---
+import raw from "../data/prices/generation_costs.json";
+import { GROUP_LABELS, ticks, usd0, type CostGroup, type GenerationCosts } from "../lib/prices.ts";
+
+// Range bars drawn with HTML and CSS (percent positions), so labels wrap on phones
+// and the chart reads without JavaScript.
+const d = raw as unknown as GenerationCosts;
+const MAX = 450;
+const pos = (v: number) => `${((v / MAX) * 100).toFixed(2)}%`;
+const axis = ticks(0, MAX, 50).filter((v) => v <= MAX);
+const groups: CostGroup[] = ["new", "existing", "storage"];
+const pointsFor = (id: string) => d.virginia.filter((p) => p.compare === id);
+const src = d.sources;
+---
+<figure class="costs" aria-labelledby="costs-title">
+  <figcaption>
+    <h2 id="costs-title">What it costs to make electricity, by source</h2>
+    <p class="muted">Cost per megawatt-hour over a plant's life, before tax credits. Bars show Lazard's low to high estimate. $100 per MWh is 10 cents per kWh.</p>
+  </figcaption>
+
+  <div class="axis" aria-hidden="true">
+    <span></span>
+    <div class="track">
+      {axis.map((v) => <span class="tick" style={`left:${pos(v)}`}>{v % 100 === 0 ? usd0(v) : ""}</span>)}
+    </div>
+    <span></span>
+  </div>
+
+  {groups.map((g) => (
+    <section class="grp" aria-label={GROUP_LABELS[g]}>
+      <h3>{GROUP_LABELS[g]}</h3>
+      <ul role="list">
+        {d.rows.filter((r) => r.group === g).sort((a, b) => a.low - b.low).map((r) => (
+          <li class="row" data-group={g}>
+            <span class="lbl">{r.label}{pointsFor(r.id).map((p) => <span class="pt-note"> · CVOW estimate {usd0(p.value)}</span>)}</span>
+            <div class="track" role="img" aria-label={`${r.label}: ${usd0(r.low)} to ${usd0(r.high)} per MWh`}>
+              {axis.map((v) => <span class="grid" style={`left:${pos(v)}`}></span>)}
+              <span class="bar" style={`left:${pos(r.low)};width:calc(${pos(r.high - r.low)})`}
+                title={`${r.label}: ${usd0(r.low)} to ${usd0(r.high)} per MWh (${(r.low / 10).toFixed(1)} to ${(r.high / 10).toFixed(1)} cents per kWh)${r.note ? `. ${r.note}` : ""}`}></span>
+              {pointsFor(r.id).map((p) => (
+                <span class="pt" style={`left:${pos(p.value)}`} title={`${p.label}: ${usd0(p.value)} per MWh. ${p.note}`}>
+                  <span class="pt-lbl">CVOW {usd0(p.value)}</span>
+                </span>
+              ))}
+            </div>
+            <span class="val">{usd0(r.low)}–{usd0(r.high)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+
+  <div class="keys">
+    <span><i class="k bar-k"></i>Lazard national range, low to high</span>
+    <span><i class="k pt-k"></i>Dominion's own estimate for its offshore wind farm (CVOW)</span>
+  </div>
+
+  <details>
+    <summary>Show the numbers and sources</summary>
+    <div class="scroll">
+      <table class="plain">
+        <thead><tr><th scope="col">Source of power</th><th scope="col">Low ($/MWh)</th><th scope="col">High ($/MWh)</th><th scope="col">Cents per kWh</th><th scope="col">Source</th></tr></thead>
+        <tbody>
+          {d.rows.map((r) => (
+            <tr>
+              <td>{r.label}{r.note && <div class="muted small">{r.note}</div>}</td>
+              <td>{usd0(r.low)}</td><td>{usd0(r.high)}</td>
+              <td>{(r.low / 10).toFixed(1)}–{(r.high / 10).toFixed(1)}¢</td>
+              <td><a href={src[r.source].url ?? undefined}>{src[r.source].name}</a>, {r.page}</td>
+            </tr>
+          ))}
+          {d.virginia.map((p) => (
+            <tr>
+              <td>{p.label}<div class="muted small">{p.note}</div></td>
+              <td colspan="2">{usd0(p.value)} (single estimate)</td>
+              <td>{(p.value / 10).toFixed(1)}¢</td>
+              <td><a href={src[p.source].url ?? undefined}>{src[p.source].name}</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted small">{d.notes} {d.notCovered}</p>
+    <p class="small"><a href="/data/v1/generation-costs.csv" download>Download CSV</a> · <a href="/data/v1/generation-costs.json">JSON</a></p>
+  </details>
+</figure>
+
+<style>
+  .costs { margin: 0; }
+  .costs figcaption { margin-bottom: 16px; }
+  .costs figcaption p { margin-top: 6px; max-width: 68ch; }
+  .row, .axis { display: grid; grid-template-columns: minmax(120px, 15rem) 1fr 6.5rem; gap: 12px; align-items: center; }
+  .axis { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; height: 20px; }
+  .track { position: relative; height: 26px; }
+  .axis .track { height: 20px; }
+  .tick { position: absolute; transform: translateX(-50%); bottom: 0; white-space: nowrap; }
+  .grid { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--rule); }
+  .bar { position: absolute; top: 7px; height: 12px; border-radius: 4px; background: var(--c4); }
+  [data-group="existing"] .bar { background: var(--c3); }
+  [data-group="storage"] .bar { background: var(--muted); }
+  .pt { position: absolute; top: 3px; width: 20px; height: 20px; margin-left: -10px; }
+  .pt::before { content: ""; position: absolute; inset: 3px; transform: rotate(45deg); background: var(--ink); box-shadow: 0 0 0 2px var(--bg); }
+  .pt-lbl { position: absolute; right: 22px; top: 1px; font-size: 12px; font-weight: 600; white-space: nowrap; color: var(--ink); background: var(--bg); padding: 0 3px; }
+  .pt-note { display: none; font-weight: 600; }
+  .grp h3 { margin: 18px 0 6px; font-size: 14px; color: var(--muted); }
+  .grp ul { list-style: none; margin: 0; padding: 0; }
+  .row { padding: 3px 0; }
+  .lbl { font-size: 14px; line-height: 1.25; }
+  .val { font-size: 14px; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .keys { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .k { display: inline-block; vertical-align: middle; margin-right: 6px; }
+  .bar-k { width: 22px; height: 10px; border-radius: 4px; background: var(--c4); }
+  .pt-k { width: 10px; height: 10px; transform: rotate(45deg); background: var(--ink); margin: 0 9px 0 4px; }
+  details { margin-top: 18px; }
+  summary { cursor: pointer; color: var(--teal); }
+  details > * + * { margin-top: 10px; }
+  .small { font-size: 13px; }
+  @media (max-width: 640px) {
+    .row, .axis { grid-template-columns: 1fr 5.5rem; }
+    .row .lbl { grid-column: 1 / -1; }
+    .axis > span:first-child { display: none; }
+    .row .track { grid-column: 1; }
+    .pt-lbl { display: none; }
+    .pt-note { display: inline; }
+  }
+  @media (forced-colors: active) { .bar, .pt::before { background: CanvasText; } }
+</style>
