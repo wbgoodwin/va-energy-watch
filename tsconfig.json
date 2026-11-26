@@ -2,7 +2,8 @@
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node"]
   },
   "include": [".astro/types.d.ts", "src/**/*", "scripts/**/*", "test/**/*"],
   "exclude": ["dist", "functions"]
