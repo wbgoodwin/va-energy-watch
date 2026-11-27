@@ -135,6 +135,7 @@ export const INDEX_COLUMNS = [
   "sha256",
   "bytes",
   "saved_at",
+  "docid",
 ] as const;
 export type IndexRow = Record<(typeof INDEX_COLUMNS)[number], string>;
 
@@ -194,3 +195,64 @@ export function parseUrlList(text: string): string[] {
     .map((l) => l.trim())
     .filter((l) => l && !l.startsWith("#"));
 }
+
+/** One document record from the Docket Search metadata the user saved (Document_Name, Date_Filed, DocID, FileName). */
+export interface DocMeta {
+  docId: string; // 393609
+  name: string; // Document_Name
+  filed?: string; // 2026-11-12
+  fileName: string; // 8fpl01!.PDF
+}
+
+/**
+ * Find every document record in a JSON value the user saved: a top-level array, an object wrapping one, or records
+ * nested anywhere (Breeze/IdeaBlade responses wrap results and use $ref for repeats, which are skipped).
+ * Records are de-duplicated by DocID (or FileName) and keep their original order.
+ */
+export function extractDocRecords(json: unknown): DocMeta[] {
+  const out: DocMeta[] = [];
+  const seen = new Set<string>();
+  const visit = (v: unknown) => {
+    if (Array.isArray(v)) return v.forEach(visit);
+    if (!v || typeof v !== "object") return;
+    const o = v as Record<string, unknown>;
+    if (typeof o.FileName === "string" && o.FileName.trim()) {
+      const docId = o.DocID == null ? "" : String(o.DocID);
+      const key = docId || o.FileName;
+      if (!seen.has(key)) {
+        seen.add(key);
+        const date = typeof o.Date_Filed === "string" ? /^(\d{4}-\d{2}-\d{2})/.exec(o.Date_Filed)?.[1] : undefined;
+        out.push({ docId, name: typeof o.Document_Name === "string" ? o.Document_Name.trim() : "", filed: date, fileName: o.FileName.trim() });
+      }
+      return;
+    }
+    Object.values(o).forEach(visit);
+  };
+  visit(json);
+  return out;
+}
+
+/** https://www.scc.virginia.gov/docketsearch/DOCS/ + the encoded FileName ("8#k701!.PDF" -> "8%23k701!.PDF") */
+export function urlForMeta(meta: DocMeta): string {
+  return normalizeDocUrl(`https://www.scc.virginia.gov${SCC_DOCS_PATH}${encodeURIComponent(meta.fileName)}`);
+}
+
+/** 2026-11-12_Dominion-Energy-Inc-et-al-Memorandum-attaching-187-comments-..._393609.pdf */
+export function fileNameForMeta(meta: DocMeta): string {
+  const parts = [meta.filed, meta.name ? slugify(meta.name, 100) : undefined, meta.docId || safeDocId(meta.fileName.replace(/\.pdf$/i, ""))];
+  return `${parts.filter(Boolean).join("_")}.pdf`;
+}
+
+/**
+ * Key for matching a browser download to its record by FileName. Browsers may swap "#" for "_" and add " (1)" to
+ * repeat downloads, and the extension case varies.
+ */
+export function downloadMatchKey(path: string): string {
+  const base = path.split(/[\\/]/).pop() ?? path;
+  return base
+    .toLowerCase()
+    .replace(/ \(\d+\)(?=\.pdf$)/, "")
+    .replace(/[#_ ]/g, "_");
+}
+
+export const CASE_NUMBER = /^[A-Z]{3}-\d{4}-\d{5}$/;

@@ -40,10 +40,42 @@ npm run scc-docs -- --list ~/scc-to-get.txt
 npm run scc-docs -- --import ~/Downloads/8_k701!.PDF --source-url "https://www.scc.virginia.gov/docketsearch/DOCS/8%23k701!.PDF"
 npm run scc-docs -- --import ~/Downloads/*.PDF
 
+# Records you saved from Docket Search (see "From a metadata list" below)
+npm run scc-docs -- --meta ~/scc-docs.json --case PUR-2026-00112
+
 # Somewhere other than ./scc-docs
 npm run scc-docs -- --out ~/Documents/SCC-cases "https://..."
 export SCC_DOCS_DIR=~/Documents/SCC-cases    # or set it once
 ```
+
+## From a metadata list
+
+Docket Search shows each case's documents as records like this one (for example in the browser's developer tools,
+Network tab). Save the records you want to a `.json` file yourself; the script never asks the SCC for this list.
+
+```json
+[
+  {
+    "Document_Name": "Dominion Energy, Inc., et al. - Memorandum attaching 187 comments ...",
+    "Date_Filed": "2026-11-12T00:00:00.000",
+    "DocID": 393609,
+    "FileName": "8fpl01!.PDF"
+  }
+]
+```
+
+A plain array, an object wrapping one, or a whole saved response all work; any object with a `FileName` counts, and
+repeats are skipped. For each record the script downloads `https://www.scc.virginia.gov/docketsearch/DOCS/<FileName>`
+(5 seconds apart, as above) and saves it as `<Date_Filed>_<Document_Name>_<DocID>.pdf`, for example
+`2026-11-12_Dominion-Energy-Inc-et-al-Memorandum-attaching-187-comments-submitted-to-the-Commission-for_393609.pdf`.
+The DocID keeps names unique; long names are cut at about 100 characters.
+
+- `--case PUR-2026-00112` puts them in that case's folder. Without it, the case number is read from each cover sheet,
+  and anything without one goes to `_unsorted/`.
+- Add `--import ~/Downloads/*.PDF` to file PDFs you downloaded in the browser instead: each is matched to its record by
+  `FileName` (browsers that turn `#` into `_` or add ` (1)` still match). With `--import`, nothing is downloaded; records
+  with no matching file are listed so you know what's missing.
+- `index.csv` records the `docid`, the full `Document_Name` (as `description`) and the SCC link.
 
 ## Output
 

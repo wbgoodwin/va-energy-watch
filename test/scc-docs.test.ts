@@ -1,11 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync, copyFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   dedupeFileName,
+  downloadMatchKey,
+  extractDocRecords,
+  fileNameForMeta,
+  urlForMeta,
   docIdFromUrl,
   fileNameFor,
   filingYaml,
@@ -78,7 +82,7 @@ test("long descriptions are cut on a word boundary; clashing names get the doc i
 test("index CSV round-trips quotes and commas", () => {
   const row: IndexRow = {
     file: "x.pdf", case_number: "PUR-2026-00044", efiling_date: "2026-11-24", document_type: "EXBR",
-    description: 'Brief, "corrected"', scc_doc_id: "8#k701!", source_url: DOC, sha256: "ab", bytes: "10", saved_at: "t",
+    description: 'Brief, "corrected"', scc_doc_id: "8#k701!", source_url: DOC, sha256: "ab", bytes: "10", saved_at: "t", docid: "1",
   };
   assert.deepEqual(parseIndexCsv(toIndexCsv([row])), [row]);
   assert.match(filingYaml(row), /date: 2026-11-24, title: "Brief, \\"corrected\\"".*url: "https:\/\/www\.scc/);
@@ -110,5 +114,62 @@ test("a fixture PDF is named from its cover sheet, indexed, and not saved twice"
     assert.deepEqual(readdirSync(join(out, "PUR-2026-00044")).sort(), ["2026-11-24_EXBR_VPLC-VO-Post-Hearing-Brief.pdf", "index.csv"]);
   } finally {
     rmSync(out, { recursive: true, force: true });
+  }
+});
+
+const record = {
+  $id: "71",
+  $type: "_IB_x, _IB_x_IdeaBlade",
+  Document_Name: "Dominion Energy, Inc., et al. - Memorandum attaching 187 comments submitted to the Commission for consideration by Kirsten Balog, Nick Smith, Candy Pedigo, et al.",
+  Date_Filed: "2026-11-12T00:00:00.000",
+  DocID: 393609,
+  FileName: "8fpl01!.PDF",
+};
+
+test("Docket Search metadata: records found in an array or a wrapper, $ref repeats skipped", () => {
+  const fromArray = extractDocRecords([record, { ...record, $id: "72", DocID: 393610, FileName: "8#k701!.PDF", Date_Filed: null }]);
+  assert.equal(fromArray.length, 2);
+  assert.deepEqual(extractDocRecords({ $id: "1", Results: [record, { $ref: "71" }] }), [fromArray[0]]);
+  assert.deepEqual(fromArray[0], { docId: "393609", name: record.Document_Name, filed: "2026-11-12", fileName: "8fpl01!.PDF" });
+  assert.equal(urlForMeta(fromArray[0]), "https://www.scc.virginia.gov/docketsearch/DOCS/8fpl01!.PDF");
+  assert.equal(urlForMeta(fromArray[1]), DOC);
+  assert.equal(
+    fileNameForMeta(fromArray[0]),
+    "2026-11-12_Dominion-Energy-Inc-et-al-Memorandum-attaching-187-comments-submitted-to-the-Commission-for_393609.pdf",
+  );
+  assert.equal(fileNameForMeta(fromArray[1]), "Dominion-Energy-Inc-et-al-Memorandum-attaching-187-comments-submitted-to-the-Commission-for_393610.pdf");
+});
+
+test("browser downloads match their record by FileName", () => {
+  assert.equal(downloadMatchKey("/Users/me/Downloads/8_k701!.PDF"), downloadMatchKey("8#k701!.PDF"));
+  assert.equal(downloadMatchKey("8fpl01! (1).pdf"), downloadMatchKey("8fpl01!.PDF"));
+});
+
+test("--meta with --import files matching downloads under --case, named from the record", { skip: !hasPdftotext && "pdftotext not installed" }, async () => {
+  const dir = mkdtempSync(join(tmpdir(), "scc-meta-test-"));
+  try {
+    const out = join(dir, "out");
+    const meta = join(dir, "docs.json");
+    writeFileSync(meta, JSON.stringify([record]));
+    const download = join(dir, "8fpl01!.PDF");
+    copyFileSync(new URL("./fixtures/scc-cover-sheet.pdf", import.meta.url), download);
+    const log = console.log;
+    console.log = () => {};
+    try {
+      assert.equal(await main(["--meta", meta, "--case", "PUR-2026-00112", "--import", download, "--out", out]), 0);
+      assert.equal(await main(["--meta", meta, "--case", "PUR-2026-00112", "--import", download, "--out", out]), 0); // second run skips
+    } finally {
+      console.log = log;
+    }
+    const caseDir = join(out, "PUR-2026-00112");
+    const name = "2026-11-12_Dominion-Energy-Inc-et-al-Memorandum-attaching-187-comments-submitted-to-the-Commission-for_393609.pdf";
+    assert.deepEqual(readdirSync(caseDir).sort(), [name, "index.csv"]);
+    const [row] = parseIndexCsv(readFileSync(join(caseDir, "index.csv"), "utf8"));
+    assert.equal(row.docid, "393609");
+    assert.equal(row.efiling_date, "2026-11-12");
+    assert.equal(row.description, record.Document_Name);
+    assert.equal(row.source_url, "https://www.scc.virginia.gov/docketsearch/DOCS/8fpl01!.PDF");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 });
