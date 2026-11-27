@@ -9,6 +9,7 @@
     "check": "astro check",
     "test": "node --test \"test/**/*.test.ts\"",
     "validate": "node scripts/validate-data.ts",
+    "scc-docs": "node scripts/fetch-scc-docs.ts",
     "deploy": "wrangler deploy"
   },
   "license": "MIT",

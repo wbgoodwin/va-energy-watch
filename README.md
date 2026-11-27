@@ -42,6 +42,7 @@ npx wrangler dev # serve dist/ plus the Worker, as Cloudflare will
 - [Deploying to Cloudflare and connecting the domain](docs/deploy.md)
 - [Adding or updating a case](docs/adding-a-case.md)
 - [How docket data is gathered, and why there is no crawler](docs/dockets.md)
+- [Saving SCC case documents you picked](docs/scc-documents.md)
 
 ## Roadmap
 

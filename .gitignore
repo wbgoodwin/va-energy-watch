@@ -8,3 +8,5 @@ dist/
 # LEAD tract downloads are large; keep raw zips out of git
 data-raw/
 .dev.vars
+# SCC case PDFs saved by scripts/fetch-scc-docs.ts: the site links to the SCC's copy, it does not rehost them
+scc-docs/
