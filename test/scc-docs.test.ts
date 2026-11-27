@@ -21,7 +21,7 @@ import {
   toIndexCsv,
   type IndexRow,
 } from "../scripts/scc-docs-lib.ts";
-import { loadExisting, main, savePdf } from "../scripts/fetch-scc-docs.ts";
+import { loadExisting, main, savePdf, waitMs } from "../scripts/fetch-scc-docs.ts";
 
 const DOC = "https://www.scc.virginia.gov/docketsearch/DOCS/8%23k701!.PDF";
 const fixture = new Uint8Array(readFileSync(new URL("./fixtures/scc-cover-sheet.pdf", import.meta.url)));
@@ -171,5 +171,16 @@ test("--meta with --import files matching downloads under --case, named from the
     assert.equal(row.source_url, "https://www.scc.virginia.gov/docketsearch/DOCS/8fpl01!.PDF");
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("waits are the base delay plus a random extra, never less than the delay", () => {
+  assert.equal(waitMs(5, 5, () => 0), 5000);
+  assert.equal(waitMs(5, 5, () => 0.5), 7500);
+  assert.equal(waitMs(5, 5, () => 0.999), 9995);
+  assert.equal(waitMs(5, 0, () => 0.7), 5000);
+  for (let i = 0; i < 1000; i++) {
+    const ms = waitMs(5, 5);
+    assert.ok(ms >= 5000 && ms <= 10000, String(ms));
   }
 });
