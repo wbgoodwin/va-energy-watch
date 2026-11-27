@@ -7,7 +7,9 @@ links to the SCC's copy of every document and does not rehost PDFs.
 ## What it will and won't do
 
 - Fetches only the URLs you give it (arguments or a text file). It never follows links, lists dockets or searches.
-- One request at a time, 5 seconds apart by default (3 minimum), with an honest User-Agent naming this project.
+- One request at a time. Between downloads it waits 5 seconds (`--delay`, 3 minimum) plus a random 0 to 5 seconds
+  (`--jitter`, 0 turns it off), so 5 to 10 seconds by default. Every request carries an honest User-Agent naming this
+  project; the random wait spreads the load out, it doesn't disguise the script.
 - Accepts only `https://www.scc.virginia.gov/docketsearch/DOCS/...` links.
 - Skips anything already saved (same URL, or same file contents).
 - Refuses to save a response that isn't a PDF (for example an error or block page).
@@ -66,7 +68,7 @@ Network tab). Save the records you want to a `.json` file yourself; the script n
 
 A plain array, an object wrapping one, or a whole saved response all work; any object with a `FileName` counts, and
 repeats are skipped. For each record the script downloads `https://www.scc.virginia.gov/docketsearch/DOCS/<FileName>`
-(5 seconds apart, as above) and saves it as `<Date_Filed>_<Document_Name>_<DocID>.pdf`, for example
+(one at a time, with the same waits as above) and saves it as `<Date_Filed>_<Document_Name>_<DocID>.pdf`, for example
 `2026-11-12_Dominion-Energy-Inc-et-al-Memorandum-attaching-187-comments-submitted-to-the-Commission-for_393609.pdf`.
 The DocID keeps names unique; long names are cut at about 100 characters.
 

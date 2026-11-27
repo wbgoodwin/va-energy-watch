@@ -142,6 +142,14 @@ export async function savePdf(opts: {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * How long to wait before the next download: the base delay plus a random extra of 0 to `jitterSeconds`.
+ * The extra only ever adds time, so the wait is never shorter than --delay.
+ */
+export function waitMs(delaySeconds: number, jitterSeconds: number, random: () => number = Math.random): number {
+  return Math.round((delaySeconds + random() * jitterSeconds) * 1000);
+}
+
 async function download(url: string): Promise<Uint8Array> {
   const res = await fetch(url, { headers: { "User-Agent": USER_AGENT, Accept: "application/pdf" }, redirect: "follow" });
   if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
@@ -168,6 +176,7 @@ Options:
   --case <docket>      Case folder for --meta documents (else read from each cover sheet)
   --out <dir>          Output folder (default: $SCC_DOCS_DIR or ./scc-docs)
   --delay <seconds>    Pause between downloads (default 5, minimum ${MIN_DELAY_SECONDS})
+  --jitter <seconds>   Random extra pause added to each wait, 0 to this many seconds (default 5; 0 turns it off)
   -h, --help           Show this help
 
 Only https://www.scc.virginia.gov/docketsearch/DOCS/... links are accepted. Already-saved URLs are skipped.`;
@@ -184,6 +193,7 @@ export async function main(argv: string[]): Promise<number> {
       case: { type: "string" },
       out: { type: "string" },
       delay: { type: "string", default: "5" },
+      jitter: { type: "string", default: "5" },
       help: { type: "boolean", short: "h" },
     },
   });
@@ -198,6 +208,16 @@ export async function main(argv: string[]): Promise<number> {
     console.error(`--delay must be at least ${MIN_DELAY_SECONDS} seconds`);
     return 1;
   }
+  const jitterSeconds = Number(values.jitter);
+  if (!Number.isFinite(jitterSeconds) || jitterSeconds < 0) {
+    console.error("--jitter must be 0 or more seconds");
+    return 1;
+  }
+  const pause = async () => {
+    const ms = waitMs(delaySeconds, jitterSeconds);
+    console.log(`  wait    ${(ms / 1000).toFixed(1)}s`);
+    await sleep(ms);
+  };
 
   const caseNumber = values.case?.trim().toUpperCase();
   if (caseNumber && !CASE_NUMBER.test(caseNumber)) {
@@ -299,7 +319,7 @@ export async function main(argv: string[]): Promise<number> {
         console.log(`  skip    already saved as ${dupe.case_number || UNSORTED}/${dupe.file}`);
         continue;
       }
-      if (fetched > 0) await sleep(delaySeconds * 1000);
+      if (fetched > 0) await pause();
       fetched++;
       try {
         const bytes = await download(url);
@@ -329,7 +349,7 @@ export async function main(argv: string[]): Promise<number> {
       console.log(`  skip    already saved as ${dupe.case_number || UNSORTED}/${dupe.file}`);
       continue;
     }
-    if (fetched > 0) await sleep(delaySeconds * 1000);
+    if (fetched > 0) await pause();
     fetched++;
     try {
       const bytes = await download(url);
